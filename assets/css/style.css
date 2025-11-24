@@ -51,7 +51,7 @@ header {
     transition: all 0.3s ease;
 }
 
-.logo-container { margin-left: 20px; z-index: 1001; } /* Z-index alto para estar sobre el menú movil */
+.logo-container { margin-left: 20px; z-index: 1001; } 
 .logo-container img {
     height: 70px;
     width: auto;
@@ -105,24 +105,36 @@ header {
 .header-social a:hover { color: #ccc; transform: scale(1.1); }
 
 /* =========================================
-   ELEMENTOS MENÚ MÓVIL
+   ELEMENTOS MENÚ MÓVIL (HAMBURGUESA)
    ========================================= */
 .menu-toggle {
     display: none; /* Oculto en PC */
-    font-size: 1.8rem;
-    color: white;
     cursor: pointer;
-    z-index: 1002; /* Por encima de todo */
+    z-index: 1002;
+    /* Flex para alinear las líneas */
+    flex-direction: column;
+    gap: 6px; /* Espacio entre líneas */
+    padding: 5px;
+}
+
+/* ESTILO DE LAS LÍNEAS DELGADAS */
+.menu-toggle span {
+    display: block;
+    width: 25px; /* Ancho de la línea */
+    height: 2px; /* Grosor DELGADO */
+    background-color: white;
+    border-radius: 2px;
+    transition: all 0.3s ease;
 }
 
 .mobile-menu-overlay {
-    display: none; /* Oculto por defecto */
+    display: none; 
     position: fixed;
     top: 0;
-    right: 0; /* Sale de la derecha */
-    width: 100%; /* Ocupa toda la pantalla o un % */
+    right: 0; 
+    width: 100%; 
     height: 100vh;
-    background-color: rgba(0, 0, 0, 0.95); /* Fondo negro casi solido */
+    background-color: rgba(0, 0, 0, 0.95);
     flex-direction: column;
     justify-content: center;
     align-items: center;
@@ -130,9 +142,7 @@ header {
     transition: transform 0.3s ease;
 }
 
-.mobile-menu-overlay.active {
-    display: flex;
-}
+.mobile-menu-overlay.active { display: flex; }
 
 .mobile-menu-overlay ul {
     list-style: none;
@@ -156,9 +166,7 @@ header {
     gap: 30px;
 }
 
-.mobile-social a {
-    font-size: 1.8rem;
-}
+.mobile-social a { font-size: 1.8rem; }
 
 /* =========================================
    MODO TRANSPARENTE (Header)
@@ -323,43 +331,38 @@ main { margin-top: 100px; min-height: 90vh; }
 }
 
 @media screen and (max-width: 768px) {
-    /* 1. HEADER MÓVIL (Transparente y Menú Hamburguesa) */
+    /* 1. HEADER MÓVIL */
     header { 
         padding: 20px; 
         height: auto; 
-        /* Mantenemos el fondo gradiente o transparente, NO negro sólido forzoso */
     }
     
-    /* REGLA IMPORTANTE: En movil tambien permitimos transparencia */
     body.transparent-mode header { 
         background: linear-gradient(180deg, rgba(0,0,0,0.9) 0%, rgba(0,0,0,0) 100%) !important; 
     }
     body.transparent-mode main { margin-top: 0; }
 
-    /* Ocultar menú desktop */
     .desktop-nav, .desktop-social { display: none; }
     
-    /* Mostrar icono hamburguesa */
-    .menu-toggle { display: block; }
+    /* Mostrar menú hamburguesa (Flex para alinear líneas) */
+    .menu-toggle { display: flex; }
 
-    /* Ajuste logo */
-    .logo-container { margin-left: 0; margin-bottom: 0; } /* Eliminamos margins raros */
+    .logo-container { margin-left: 0; margin-bottom: 0; } 
 
-    /* 2. HOME CARRUSEL MÓVIL (Más pequeño y con margen) */
-    /* Usamos :not(.project-carousel-frame) para no afectar a los de proyectos */
+    /* 2. HOME CARRUSEL MÓVIL (Más altura: 75vh) */
     .carousel-container:not(.project-carousel-frame) {
-        height: 55vh; /* Menos altura */
+        height: 75vh; /* AUMENTADO */
         width: auto;
-        margin: 20px; /* Margen a los costados */
-        border-radius: 8px; /* Opcional: borde redondeado */
+        margin: 20px; 
+        border-radius: 8px; 
     }
 
-    /* 3. PROYECTOS BANNER TEXTO (Que quepa todo) */
+    /* 3. PROYECTOS BANNER TEXTO */
     .project-hero, .about-banner {
         height: auto !important; 
         min-height: 60vh; 
         padding-bottom: 60px; 
-        align-items: flex-end; /* Alinear contenido abajo para dar espacio */
+        align-items: flex-end; 
     }
 
     .hero-text, .about-text {
@@ -367,7 +370,7 @@ main { margin-top: 100px; min-height: 90vh; }
         text-align: left; 
         padding: 20px; 
         width: 100%;
-        background: linear-gradient(to top, rgba(0,0,0,0.8), transparent); /* Sombra para leer texto */
+        background: linear-gradient(to top, rgba(0,0,0,0.8), transparent); 
     }
 
     .hero-text h1, .about-text h1 { font-size: 1.8rem; }
