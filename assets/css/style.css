@@ -1,13 +1,11 @@
 /* Reset y Variables */
 :root {
     --bg-color: #000000;
-    --header-gradient-top: #141414;
-    --header-gradient-bottom: #000000;
     --text-color: #ffffff;
     --font-main: 'Montserrat', sans-serif;
-    --input-bg: #111111; /* Fondo oscuro para inputs */
-    --input-border: #333333; /* Borde gris sutil */
-    --btn-blue: #254685; /* Azul similar a la imagen */
+    --input-bg: #111111; 
+    --input-border: #333333; 
+    --btn-blue: #254685; 
     --btn-blue-hover: #1d3666;
 }
 
@@ -37,9 +35,12 @@ p {
     line-height: 1.8;
 }
 
-/* HEADER */
+/* =========================================
+   HEADER GLOBAL (Ajustes de Logo y Menú)
+   ========================================= */
 header {
-    background: linear-gradient(to bottom, var(--header-gradient-top), var(--header-gradient-bottom));
+    /* Fondo por defecto (para páginas que no son transparentes) */
+    background: linear-gradient(to bottom, #141414, #000000);
     padding: 20px 40px;
     display: flex;
     justify-content: space-between;
@@ -51,36 +52,45 @@ header {
     transition: all 0.3s ease;
 }
 
-.logo-container img {
-    height: 50px;
-    width: auto;
-    display: block;
-    max-width: 200px;
-    object-fit: contain;
+/* LOGO: Más grande y más a la derecha */
+.logo-container {
+    margin-left: 20px; /* Lo mueve a la derecha */
 }
 
-/* MENU CENTRAL */
+.logo-container img {
+    height: 70px; /* Creció de 50px a 70px */
+    width: auto;
+    display: block;
+    max-width: 250px;
+    object-fit: contain;
+    transition: transform 0.3s;
+}
+
+/* MENU CENTRAL: Redistribución */
 nav {
-    flex: 1;
+    flex: 2; /* Ocupa más espacio disponible para empujar "Cursos" a la derecha */
     display: flex;
-    justify-content: center;
+    justify-content: center; /* Centramos el bloque del menú */
     margin: 0 40px;
 }
 
 nav ul {
     display: flex;
     list-style: none;
-    gap: 50px;
     align-items: center;
+    width: 100%;            /* Ocupa todo el ancho del contenedor nav */
+    max-width: 800px;       /* Limitamos el ancho para que no se separen demasiado */
+    justify-content: space-between; /* Home a la izq, Cursos a la der, el resto al centro */
 }
 
 nav a {
     text-decoration: none;
     color: var(--text-color);
     font-size: 1rem;
-    font-weight: 300;
+    font-weight: 400; /* Un poco más de peso para legibilidad sobre fotos */
     text-transform: none;
     letter-spacing: 0.5px;
+    text-shadow: 0px 2px 4px rgba(0,0,0,0.5); /* Sombra suave para leer sobre fotos */
     transition: color 0.3s, opacity 0.3s;
 }
 
@@ -100,6 +110,7 @@ nav a:hover {
     color: white;
     font-size: 1.1rem;
     transition: transform 0.3s, color 0.3s;
+    text-shadow: 0px 2px 4px rgba(0,0,0,0.5);
 }
 
 .header-social a:hover {
@@ -107,13 +118,39 @@ nav a:hover {
     transform: scale(1.1);
 }
 
-/* CONTENEDOR PRINCIPAL */
+/* CONTENEDOR PRINCIPAL STANDARD */
 main {
     margin-top: 100px;
     min-height: 80vh;
 }
 
-/* CARRUSEL GENERAL */
+/* =========================================
+   MODO TRANSPARENTE (Fusión "Cinematográfica")
+   ========================================= */
+/* Esta clase se añade al BODY en las páginas específicas */
+body.transparent-mode header {
+    background: transparent; /* Quitamos el negro sólido */
+    /* Añadimos un degradado de negro a transparente para leer el menú */
+    background: linear-gradient(180deg, rgba(0,0,0,0.9) 0%, rgba(0,0,0,0.5) 40%, rgba(0,0,0,0) 100%);
+    box-shadow: none;
+    padding-top: 30px; /* Un poco más de aire arriba */
+}
+
+/* En modo transparente, el main sube hasta arriba (top 0) */
+body.transparent-mode main {
+    margin-top: 0 !important;
+}
+
+/* Ajustes para que los textos de los banners no queden tapados por el menú */
+body.transparent-mode .project-hero,
+body.transparent-mode .about-banner,
+body.transparent-mode .projects-menu {
+    /* Aseguramos que el contenido empiece visualmente bien aunque la caja empiece en 0 */
+    padding-top: 100px; 
+}
+
+
+/* CARRUSEL GENERAL (Home) */
 .carousel-container {
     position: relative;
     width: 100%;
@@ -132,7 +169,6 @@ main {
     display: none; 
 }
 
-/* Corrección de visibilidad forzada */
 .carousel-slide.active {
     display: block !important; 
 }
@@ -225,6 +261,7 @@ footer .social-icons-footer a:hover {
     text-align: center;
     max-width: 900px;
     padding: 20px;
+    margin-top: 50px; /* Para bajar el texto un poco más */
 }
 
 .hero-text h1 { font-size: 3rem; margin-bottom: 20px; text-transform: uppercase; }
@@ -249,104 +286,52 @@ footer .social-icons-footer a:hover {
 .btn-curso { font-weight: 700; letter-spacing: 1px;}
 
 
-/* =======================================================
-   ESTILOS CONTACTO - NUEVO DISEÑO (Estilo Imagen)
-   ======================================================= */
+/* ESTILOS CONTACTO */
 .contact-section {
     padding: 50px 20px;
     max-width: 800px;
     margin: 0 auto;
 }
 
-.contact-section h1 {
-    text-align: center;
-    margin-bottom: 20px;
-}
+.contact-section h1 { text-align: center; margin-bottom: 20px; }
+.contact-section > p { text-align: center; margin-bottom: 40px; color: #ccc; }
 
-.contact-section > p {
-    text-align: center;
-    margin-bottom: 40px;
-    color: #ccc;
-}
+.contact-form { display: flex; flex-direction: column; gap: 25px; }
+.form-group { text-align: left; }
+.form-group label { display: block; margin-bottom: 10px; font-weight: 900; color: #fff; font-size: 1.1rem; }
 
-.contact-form {
-    display: flex;
-    flex-direction: column;
-    gap: 25px; /* Espacio entre campos */
-}
-
-.form-group {
-    text-align: left;
-}
-
-.form-group label {
-    display: block;
-    margin-bottom: 10px;
-    font-weight: 900; /* Letra gruesa como en la imagen */
-    color: #fff;
-    font-size: 1.1rem;
-}
-
-/* Inputs y Textarea estilizados como la imagen */
-.form-group input, 
-.form-group textarea {
-    width: 100%;
-    padding: 15px;
-    background-color: var(--input-bg);
-    border: 1px solid var(--input-border);
-    color: #fff;
-    font-family: var(--font-main);
-    font-size: 1rem;
-    border-radius: 6px; /* Bordes redondeados */
+.form-group input, .form-group textarea {
+    width: 100%; padding: 15px; background-color: var(--input-bg);
+    border: 1px solid var(--input-border); color: #fff;
+    font-family: var(--font-main); font-size: 1rem; border-radius: 6px;
     transition: border-color 0.3s;
 }
+.form-group input:focus, .form-group textarea:focus { outline: none; border-color: #666; }
 
-.form-group input:focus, 
-.form-group textarea:focus {
-    outline: none;
-    border-color: #666; /* Un gris un poco más claro al escribir */
-}
-
-/* Botón Azul Ancho Completo */
 .btn-submit {
-    width: 100%; /* Ancho completo como en la imagen */
-    padding: 18px 20px;
-    background-color: var(--btn-blue);
-    color: #fff;
-    border: none;
-    font-weight: 900;
-    text-transform: uppercase;
-    cursor: pointer;
-    transition: background-color 0.3s, transform 0.2s;
-    font-size: 1.1rem;
-    border-radius: 6px; /* Match con los inputs */
-    margin-top: 10px;
-    letter-spacing: 1px;
+    width: 100%; padding: 18px 20px; background-color: var(--btn-blue);
+    color: #fff; border: none; font-weight: 900; text-transform: uppercase;
+    cursor: pointer; transition: background-color 0.3s, transform 0.2s;
+    font-size: 1.1rem; border-radius: 6px; margin-top: 10px; letter-spacing: 1px;
 }
-
-.btn-submit:hover {
-    background-color: var(--btn-blue-hover);
-    transform: translateY(-2px);
-}
+.btn-submit:hover { background-color: var(--btn-blue-hover); transform: translateY(-2px); }
 
 /* RESPONSIVE */
 @media screen and (max-width: 1024px) {
     header { padding: 15px 20px; }
-    nav ul { gap: 25px; }
-    nav a { font-size: 0.9rem; }
-    .project-link { font-size: 2.8rem; }
-    .hero-text h1 { font-size: 2.5rem; }
+    nav ul { gap: 20px; max-width: 100%; } /* En tablets reducimos espacio */
+    .logo-container img { height: 50px; }
 }
 
 @media screen and (max-width: 768px) {
-    header { position: relative; flex-direction: column; padding: 20px; background: #141414; height: auto; }
-    .logo-container { margin-bottom: 20px; }
+    header { position: relative; flex-direction: column; padding: 20px; background: #141414 !important; height: auto; }
+    /* En movil quitamos transparencia para evitar problemas de lectura */
+    body.transparent-mode header { background: #141414 !important; }
+    body.transparent-mode main { margin-top: 0; }
+    
+    .logo-container { margin-left: 0; margin-bottom: 20px; }
     nav { margin: 15px 0; width: 100%; }
     nav ul { flex-direction: column; gap: 15px; width: 100%; padding: 0; }
     .header-social { margin-top: 15px; gap: 30px; }
-    main { margin-top: 0; }
-    .carousel-container, .project-hero { height: 50vh; }
-    h1 { font-size: 2rem !important; }
     .project-link { font-size: 2rem; margin: 25px 0; }
-    .project-nav { flex-direction: column; gap: 20px; }
 }

@@ -8,10 +8,11 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="assets/css/style.css">
     <style>
+        /* Ajuste de altura para que se vea impresionante al inicio */
         .project-hero {
             position: relative;
             width: 100%;
-            height: 60vh;
+            height: 100vh; /* Ocupa toda la pantalla */
             background-image: url('assets/img/proyectos/iztapalapa/bannerIzt.jpg');
             background-size: cover;
             background-position: center;
@@ -21,22 +22,13 @@
         }
         .project-hero::before {
             content: '';
-            position: absolute;
-            top: 0; left: 0; right: 0; bottom: 0;
-            background: rgba(0,0,0,0.5); 
+            position: absolute; top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(0,0,0,0.3); /* Un poco menos oscuro para que luzca la foto */
         }
-        .hero-text {
-            position: relative;
-            z-index: 2;
-            text-align: center;
-            max-width: 800px;
-            padding: 20px;
-        }
-        .hero-text h1 { font-size: 3rem; margin-bottom: 20px; text-transform: uppercase; }
-        .hero-text p { font-size: 1.1rem; line-height: 1.6; }
+        /* El texto ya tiene estilo en style.css pero aquí reforzamos */
     </style>
 </head>
-<body>
+<body class="transparent-mode">
 
     <header>
         <div class="logo-container">
