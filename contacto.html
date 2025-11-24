@@ -3,15 +3,108 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Eivinderivas - Contacto</title>
+    <title>Eivinderivas - Cursos</title>
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;700;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="assets/css/style.css">
+    <style>
+        .cursos-section {
+            padding: 50px 20px;
+            min-height: 70vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .cursos-section h1 {
+            font-size: 2.5rem;
+            margin-bottom: 50px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            text-align: center;
+        }
+
+        .cards-container {
+            display: flex;
+            gap: 40px;
+            flex-wrap: wrap;
+            justify-content: center;
+            max-width: 1200px;
+        }
+
+        .curso-card {
+            background-color: #141414;
+            border: 1px solid #333;
+            border-radius: 8px;
+            width: 350px;
+            padding: 0;
+            overflow: hidden;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .curso-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 10px 20px rgba(255, 255, 255, 0.1);
+            border-color: #fff;
+        }
+
+        .card-img-placeholder {
+            width: 100%;
+            height: 200px;
+            background-color: #222;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #555;
+            font-size: 0.9rem;
+        }
+        
+        .card-content {
+            padding: 25px;
+            text-align: left;
+        }
+
+        .card-content h3 {
+            font-size: 1.5rem;
+            margin-bottom: 10px;
+            color: #fff;
+        }
+
+        .card-content p {
+            font-size: 1rem;
+            color: #aaa;
+            line-height: 1.5;
+            margin-bottom: 20px;
+        }
+
+        .btn-curso {
+            display: inline-block;
+            padding: 10px 25px;
+            background-color: transparent;
+            border: 1px solid #fff;
+            color: #fff;
+            text-decoration: none;
+            text-transform: uppercase;
+            font-size: 0.8rem;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .btn-curso:hover {
+            background-color: #fff;
+            color: #000;
+        }
+    </style>
 </head>
 <body>
 
     <header>
-        <div class="logo-container"><a href="index.html"><img src="assets/img/general/logo.png" alt="Eivinderivas"></a></div>
+        <div class="logo-container">
+            <a href="index.html"><img src="assets/img/general/logo.png" alt="Eivinderivas Logo"></a>
+        </div>
         <div class="menu-toggle" id="mobile-menu-btn"><span></span><span></span><span></span></div>
 
         <nav class="desktop-nav">
@@ -25,7 +118,7 @@
         </nav>
         <div class="header-social desktop-social">
             <a href="https://www.instagram.com/eivind_derivas/" target="_blank"><i class="fa-brands fa-instagram"></i></a>
-            <a href="contacto.html" class="active"><i class="fa-regular fa-envelope"></i></a>
+            <a href="contacto.html"><i class="fa-regular fa-envelope"></i></a>
             <a href="https://www.youtube.com/@Synthgraf_IA" target="_blank"><i class="fa-brands fa-youtube"></i></a>
         </div>
 
@@ -48,29 +141,36 @@
     </header>
 
     <main>
-        <section class="contact-section">
-            <h1>Conectemos</h1>
-            <p>Encuéntrame en mis redes o envíame un mensaje a continuación.</p>
+        <section class="cursos-section">
+            <h1>Cursos Disponibles</h1>
             
-            <form action="https://formspree.io/f/xovknlbb" method="POST" class="contact-form">
+            <div class="cards-container">
                 
-                <div class="form-group">
-                    <label for="name">Nombre:</label>
-                    <input type="text" id="name" name="name" required>
-                </div>
+                <article class="curso-card">
+                    <div class="card-img-placeholder">
+                        <img src="assets/img/general/logo.png" style="height: 40px; opacity: 0.5;" alt="Placeholder">
+                    </div>
+                    
+                    <div class="card-content">
+                        <h3>Inteligencia Artificial y Fotografía</h3>
+                        <p>Descubre cómo integrar herramientas generativas en tu flujo de trabajo fotográfico y expande tus horizontes creativos.</p>
+                        <a href="contacto.html" class="btn-curso">Más Información</a>
+                    </div>
+                </article>
 
-                <div class="form-group">
-                    <label for="email">Tu Correo:</label>
-                    <input type="email" id="email" name="email" required>
-                </div>
+                <article class="curso-card">
+                    <div class="card-img-placeholder">
+                         <img src="assets/img/general/logo.png" style="height: 40px; opacity: 0.5;" alt="Placeholder">
+                    </div>
+                    
+                    <div class="card-content">
+                        <h3>Postproducción Fotográfica</h3>
+                        <p>Domina el revelado digital, la corrección de color y la edición avanzada para dar a tus imágenes el acabado profesional que buscan.</p>
+                        <a href="contacto.html" class="btn-curso">Más Información</a>
+                    </div>
+                </article>
 
-                <div class="form-group">
-                    <label for="message">Mensaje:</label>
-                    <textarea id="message" name="message" rows="6" required></textarea>
-                </div>
-
-                <button type="submit" class="btn-submit">Enviar Mensaje</button>
-            </form>
+            </div>
         </section>
     </main>
 
@@ -81,6 +181,7 @@
             <a href="contacto.html"><i class="fa-regular fa-envelope"></i></a>
         </div>
     </footer>
+
     <script src="assets/js/script.js"></script>
 </body>
 </html>

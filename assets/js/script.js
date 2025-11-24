@@ -1,6 +1,6 @@
 document.addEventListener("DOMContentLoaded", function() {
     
-    // --- LÓGICA DEL CARRUSEL ---
+    // --- LÓGICA DEL CARRUSEL PRINCIPAL (AUTO-PLAY) ---
     let slideIndex = 1;
     let slideInterval;
     
@@ -40,7 +40,7 @@ document.addEventListener("DOMContentLoaded", function() {
         }
     }
 
-    // --- LÓGICA CAMBIO DE FONDO (Proyectos) ---
+    // --- LÓGICA CAMBIO DE FONDO ---
     window.changeBackground = function(imageName) {
         const container = document.getElementById('projects-container');
         if(container) {
@@ -55,7 +55,7 @@ document.addEventListener("DOMContentLoaded", function() {
         }
     };
 
-    // --- LÓGICA MENÚ MÓVIL (NUEVO) ---
+    // --- LÓGICA MENÚ MÓVIL ---
     const menuToggle = document.getElementById('mobile-menu-btn');
     const closeMenu = document.getElementById('close-menu-btn');
     const mobileMenu = document.getElementById('mobile-menu');
@@ -70,5 +70,49 @@ document.addEventListener("DOMContentLoaded", function() {
         closeMenu.addEventListener('click', function() {
             mobileMenu.classList.remove('active');
         });
+    }
+
+    // --- LÓGICA LIGHTBOX (VISOR PANTALLA COMPLETA) ---
+    // Esta lógica es independiente. No tiene autoplay.
+    let lightboxIndex = 1;
+
+    window.openLightbox = function(n) {
+        const lightbox = document.getElementById('myLightbox');
+        if(lightbox) {
+            lightbox.style.display = "flex"; // Flex para centrar
+            lightbox.style.justifyContent = "center";
+            lightbox.style.alignItems = "center";
+            currentLightboxSlide(n);
+        }
+    };
+
+    window.closeLightbox = function() {
+        const lightbox = document.getElementById('myLightbox');
+        if(lightbox) {
+            lightbox.style.display = "none";
+        }
+    };
+
+    window.plusLightboxSlides = function(n) {
+        showLightboxSlides(lightboxIndex += n);
+    };
+
+    window.currentLightboxSlide = function(n) {
+        showLightboxSlides(lightboxIndex = n);
+    };
+
+    function showLightboxSlides(n) {
+        // Buscamos las imágenes ORIGINALES del carrusel de la página para copiarlas al visor
+        // NOTA: Usamos el selector específico del carrusel de proyectos
+        const originalImages = document.querySelectorAll('.project-carousel-frame .carousel-slide');
+        const lightboxImg = document.getElementById("lightbox-img");
+
+        if (!originalImages.length || !lightboxImg) return;
+
+        if (n > originalImages.length) {lightboxIndex = 1}
+        if (n < 1) {lightboxIndex = originalImages.length}
+
+        // Tomamos la fuente (src) de la imagen original correspondiente y la ponemos en el visor
+        lightboxImg.src = originalImages[lightboxIndex-1].src;
     }
 });

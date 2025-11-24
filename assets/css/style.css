@@ -35,9 +35,7 @@ p {
     line-height: 1.8;
 }
 
-/* =========================================
-   HEADER DESKTOP & GENERAL
-   ========================================= */
+/* HEADER */
 header {
     background: linear-gradient(to bottom, #141414, #000000);
     padding: 20px 40px;
@@ -60,7 +58,7 @@ header {
     object-fit: contain;
 }
 
-/* Navegación Desktop (se oculta en movil) */
+/* Navegación Desktop */
 .desktop-nav {
     flex: 2;
     display: flex;
@@ -90,7 +88,7 @@ header {
 
 .desktop-nav a:hover { color: #fff; opacity: 0.7; }
 
-/* Redes Sociales Desktop (se oculta en movil) */
+/* Redes Sociales Desktop */
 .desktop-social {
     display: flex;
     gap: 25px;
@@ -104,24 +102,20 @@ header {
 }
 .header-social a:hover { color: #ccc; transform: scale(1.1); }
 
-/* =========================================
-   ELEMENTOS MENÚ MÓVIL (HAMBURGUESA)
-   ========================================= */
+/* MENÚ MÓVIL (HAMBURGUESA) */
 .menu-toggle {
-    display: none; /* Oculto en PC */
+    display: none; 
     cursor: pointer;
     z-index: 1002;
-    /* Flex para alinear las líneas */
     flex-direction: column;
-    gap: 6px; /* Espacio entre líneas */
+    gap: 6px; 
     padding: 5px;
 }
 
-/* ESTILO DE LAS LÍNEAS DELGADAS */
 .menu-toggle span {
     display: block;
-    width: 25px; /* Ancho de la línea */
-    height: 2px; /* Grosor DELGADO */
+    width: 25px; 
+    height: 2px; 
     background-color: white;
     border-radius: 2px;
     transition: all 0.3s ease;
@@ -168,9 +162,7 @@ header {
 
 .mobile-social a { font-size: 1.8rem; }
 
-/* =========================================
-   MODO TRANSPARENTE (Header)
-   ========================================= */
+/* MODO TRANSPARENTE */
 body.transparent-mode header {
     background: transparent;
     background: linear-gradient(180deg, rgba(0,0,0,0.9) 0%, rgba(0,0,0,0.5) 40%, rgba(0,0,0,0) 100%);
@@ -183,12 +175,10 @@ body.transparent-mode .project-hero,
 body.transparent-mode .about-banner,
 body.transparent-mode .projects-menu { padding-top: 100px; }
 
-/* =========================================
-   CARRUSEL GENERAL (HOME)
-   ========================================= */
+/* CARRUSEL GENERAL (HOME) */
 .carousel-container {
     position: relative; width: 100%; 
-    height: 100vh; /* PC: Pantalla Completa */
+    height: 100vh; 
     overflow: hidden; display: flex; align-items: center; justify-content: center;
     background-color: #000; 
 }
@@ -273,7 +263,14 @@ footer .social-icons-footer a:hover { color: #555; }
     margin: 0 auto; overflow: hidden; background-color: #f0f0f0;
     box-shadow: 0 10px 30px rgba(0,0,0,0.1);
 }
-.project-carousel-frame .carousel-slide { width: 100%; height: 100%; object-fit: cover; display: none; }
+/* Añadimos cursor pointer para indicar que se puede hacer clic */
+.project-carousel-frame .carousel-slide { 
+    width: 100%; 
+    height: 100%; 
+    object-fit: cover; 
+    display: none; 
+    cursor: zoom-in; 
+}
 .project-carousel-frame .prev, .project-carousel-frame .next { color: #000; background-color: transparent; font-size: 2rem; }
 .project-carousel-frame .prev:hover, .project-carousel-frame .next:hover { background-color: rgba(0,0,0,0.05); }
 
@@ -286,6 +283,72 @@ footer .social-icons-footer a:hover { color: #555; }
     font-weight: 300; font-size: 1.2rem; text-transform: uppercase; transition: opacity 0.3s;
 }
 .project-nav-thin a:hover { opacity: 0.6; }
+
+/* =========================================================
+   LIGHTBOX (VISOR PANTALLA COMPLETA) - NUEVO
+   ========================================================= */
+.lightbox {
+    display: none; /* Oculto por defecto */
+    position: fixed;
+    z-index: 2000; /* Encima de todo */
+    padding-top: 50px;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgba(0, 0, 0, 0.95); /* Fondo negro oscuro */
+}
+
+.lightbox-content {
+    margin: auto;
+    display: block;
+    width: auto;
+    height: auto;
+    max-width: 90%;
+    max-height: 85vh;
+    object-fit: contain; /* Asegura que la foto se vea completa */
+}
+
+.close-lightbox {
+    position: absolute;
+    top: 20px;
+    right: 35px;
+    color: #f1f1f1;
+    font-size: 40px;
+    font-weight: bold;
+    transition: 0.3s;
+    cursor: pointer;
+    z-index: 2001;
+}
+
+.close-lightbox:hover {
+    color: #bbb;
+}
+
+/* Botones del Lightbox */
+.lightbox-prev, .lightbox-next {
+    cursor: pointer;
+    position: absolute;
+    top: 50%;
+    width: auto;
+    padding: 16px;
+    margin-top: -50px;
+    color: white;
+    font-weight: bold;
+    font-size: 40px;
+    transition: 0.6s ease;
+    user-select: none;
+}
+
+.lightbox-next { right: 20px; }
+.lightbox-prev { left: 20px; }
+
+.lightbox-prev:hover, .lightbox-next:hover {
+    color: #ccc;
+    transform: scale(1.1);
+}
+
 
 /* ESTILOS VIDEOS Y CURSOS */
 .cursos-section h1 { font-weight: 900; }
@@ -321,9 +384,7 @@ footer .social-icons-footer a:hover { color: #555; }
 /* CONTENEDOR PRINCIPAL */
 main { margin-top: 100px; min-height: 90vh; }
 
-/* =========================================
-   RESPONSIVE / MÓVIL
-   ========================================= */
+/* RESPONSIVE */
 @media screen and (max-width: 1024px) {
     header { padding: 15px 20px; }
     nav ul { gap: 20px; max-width: 100%; } 
@@ -331,51 +392,28 @@ main { margin-top: 100px; min-height: 90vh; }
 }
 
 @media screen and (max-width: 768px) {
-    /* 1. HEADER MÓVIL */
-    header { 
-        padding: 20px; 
-        height: auto; 
-    }
-    
+    header { padding: 20px; height: auto; }
     body.transparent-mode header { 
         background: linear-gradient(180deg, rgba(0,0,0,0.9) 0%, rgba(0,0,0,0) 100%) !important; 
     }
     body.transparent-mode main { margin-top: 0; }
-
     .desktop-nav, .desktop-social { display: none; }
-    
-    /* Mostrar menú hamburguesa (Flex para alinear líneas) */
     .menu-toggle { display: flex; }
-
     .logo-container { margin-left: 0; margin-bottom: 0; } 
 
-    /* 2. HOME CARRUSEL MÓVIL (Más altura: 75vh) */
     .carousel-container:not(.project-carousel-frame) {
-        height: 75vh; /* AUMENTADO */
-        width: auto;
-        margin: 20px; 
-        border-radius: 8px; 
+        height: 75vh; width: auto; margin: 20px; border-radius: 8px; 
     }
 
-    /* 3. PROYECTOS BANNER TEXTO */
     .project-hero, .about-banner {
-        height: auto !important; 
-        min-height: 60vh; 
-        padding-bottom: 60px; 
-        align-items: flex-end; 
+        height: auto !important; min-height: 60vh; padding-bottom: 60px; align-items: flex-end; 
     }
-
     .hero-text, .about-text {
-        margin-top: 100px; 
-        text-align: left; 
-        padding: 20px; 
-        width: 100%;
+        margin-top: 100px; text-align: left; padding: 20px; width: 100%;
         background: linear-gradient(to top, rgba(0,0,0,0.8), transparent); 
     }
-
     .hero-text h1, .about-text h1 { font-size: 1.8rem; }
     .hero-text p, .about-text p { font-size: 1rem; }
-
     .project-link { font-size: 2rem; margin: 25px 0; }
     .project-carousel-frame { max-width: 100%; aspect-ratio: 4 / 3; }
 }

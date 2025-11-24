@@ -70,11 +70,11 @@
 
         <section class="project-white-area">
             <div class="carousel-container project-carousel-frame">
-                <img class="carousel-slide active" src="assets/img/proyectos/jamaica/jamCarru1.jpg" alt="Jamaica 1" style="display: block;">
-                <img class="carousel-slide" src="assets/img/proyectos/jamaica/jamCarru2.jpg" alt="Jamaica 2">
-                <img class="carousel-slide" src="assets/img/proyectos/jamaica/jamCarru3.jpg" alt="Jamaica 3">
-                <img class="carousel-slide" src="assets/img/proyectos/jamaica/jamCarru4.jpg" alt="Jamaica 4">
-                <img class="carousel-slide" src="assets/img/proyectos/jamaica/jamCarru5.jpg" alt="Jamaica 5">
+                <img class="carousel-slide active" src="assets/img/proyectos/jamaica/jamCarru1.jpg" alt="Jamaica 1" style="display: block;" onclick="openLightbox(1)">
+                <img class="carousel-slide" src="assets/img/proyectos/jamaica/jamCarru2.jpg" alt="Jamaica 2" onclick="openLightbox(2)">
+                <img class="carousel-slide" src="assets/img/proyectos/jamaica/jamCarru3.jpg" alt="Jamaica 3" onclick="openLightbox(3)">
+                <img class="carousel-slide" src="assets/img/proyectos/jamaica/jamCarru4.jpg" alt="Jamaica 4" onclick="openLightbox(4)">
+                <img class="carousel-slide" src="assets/img/proyectos/jamaica/jamCarru5.jpg" alt="Jamaica 5" onclick="openLightbox(5)">
                 <a class="prev" onclick="plusSlides(-1)">&#10094;</a>
                 <a class="next" onclick="plusSlides(1)">&#10095;</a>
             </div>
@@ -85,6 +85,13 @@
             </div>
         </section>
     </main>
+
+    <div id="myLightbox" class="lightbox">
+        <span class="close-lightbox" onclick="closeLightbox()">&times;</span>
+        <img class="lightbox-content" id="lightbox-img">
+        <a class="lightbox-prev" onclick="plusLightboxSlides(-1)">&#10094;</a>
+        <a class="lightbox-next" onclick="plusLightboxSlides(1)">&#10095;</a>
+    </div>
 
     <footer>
         <div class="social-icons-footer">
