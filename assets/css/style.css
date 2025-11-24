@@ -17,19 +17,19 @@ body {
     background-color: var(--bg-color);
     color: var(--text-color);
     font-family: var(--font-main);
-    font-weight: 300; /* Texto base fino */
+    font-weight: 300;
     overflow-x: hidden;
 }
 
 /* Títulos y Encabezados Globales */
 h1, h2, h3 {
-    font-weight: 900; /* Montserrat Extra Bold */
+    font-weight: 900;
     text-transform: uppercase;
     letter-spacing: 2px;
 }
 
 p {
-    font-weight: 400; /* Montserrat Regular */
+    font-weight: 400;
     line-height: 1.8;
 }
 
@@ -38,35 +38,35 @@ header {
     background: linear-gradient(to bottom, var(--header-gradient-top), var(--header-gradient-bottom));
     padding: 20px 40px;
     display: flex;
-    justify-content: space-between; /* Logo izq, Menu centro, Iconos der */
+    justify-content: space-between;
     align-items: center;
     position: fixed;
     width: 100%;
     top: 0;
     z-index: 1000;
+    transition: all 0.3s ease; /* Suaviza cambios en responsive */
 }
 
-/* ACTUALIZACIÓN: Control robusto de dimensiones del logo */
 .logo-container img {
-    height: 50px;       /* Altura fija para mantener consistencia en el header */
-    width: auto;        /* El ancho se ajusta automáticamente para no deformar la imagen */
+    height: 50px;
+    width: auto;
     display: block;
-    max-width: 200px;   /* Límite de seguridad de ancho */
-    object-fit: contain; /* Asegura que la imagen entera sea visible sin recortes */
+    max-width: 200px;
+    object-fit: contain;
 }
 
 /* MENU CENTRAL */
 nav {
-    flex: 1; /* Ocupa todo el espacio disponible en el medio */
+    flex: 1;
     display: flex;
-    justify-content: center; /* Centra la lista de enlaces */
-    margin: 0 40px; /* Margen para no pegarse al logo ni iconos */
+    justify-content: center;
+    margin: 0 40px;
 }
 
 nav ul {
     display: flex;
     list-style: none;
-    gap: 50px; /* Espacio generoso entre palabras para "distribuir" */
+    gap: 50px;
     align-items: center;
 }
 
@@ -74,8 +74,8 @@ nav a {
     text-decoration: none;
     color: var(--text-color);
     font-size: 1rem;
-    font-weight: 300; /* DENSIDAD DELGADA */
-    text-transform: none; /* MAYÚSCULAS Y MINÚSCULAS (Quita el uppercase) */
+    font-weight: 300;
+    text-transform: none;
     letter-spacing: 0.5px;
     transition: color 0.3s, opacity 0.3s;
 }
@@ -105,7 +105,7 @@ nav a:hover {
 
 /* CONTENEDOR PRINCIPAL */
 main {
-    margin-top: 100px; 
+    margin-top: 100px; /* Espacio para el header fijo */
     min-height: 80vh;
 }
 
@@ -187,6 +187,7 @@ footer .social-icons-footer a:hover {
     background-position: center;
     background-image: url('../img/proyectos/general/fondoProy.jpg');
     transition: background-image 0.5s ease-in-out;
+    text-align: center; /* Asegura centrado en móvil */
 }
 
 .project-link {
@@ -206,15 +207,22 @@ footer .social-icons-footer a:hover {
     letter-spacing: 5px; 
 }
 
-/* TEXTO DE PROYECTOS */
-.project-banner-text {
-    padding: 40px;
-    max-width: 900px;
-    margin: 0 auto;
-    text-align: left;
+/* TEXTO DE PROYECTOS (Detalle de Iztapalapa, Jamaica, etc) */
+.project-hero {
+    /* Aseguramos que la imagen de fondo se vea bien en cualquier tamaño */
+    background-attachment: scroll; 
 }
-.project-banner-text h1 { font-size: 3rem; margin-bottom: 15px;}
-.project-banner-text p { font-size: 1.1rem; line-height: 1.8; margin-bottom: 20px; color: #ccc;}
+
+.hero-text {
+    position: relative;
+    z-index: 2;
+    text-align: center;
+    max-width: 900px;
+    padding: 20px;
+}
+
+.hero-text h1 { font-size: 3rem; margin-bottom: 20px; text-transform: uppercase; }
+.hero-text p { font-size: 1.1rem; line-height: 1.6; margin-bottom: 10px; color: #ddd;}
 
 /* NAVEGACIÓN ENTRE PROYECTOS */
 .project-nav {
@@ -227,11 +235,144 @@ footer .social-icons-footer a:hover {
 .project-nav a { color: white; text-decoration: none; opacity: 0.7; transition: opacity 0.3s;}
 .project-nav a:hover { opacity: 1; }
 
-/* ESTILOS ESPECÍFICOS PARA VIDEOS */
-.video-section h1 { font-weight: 900; }
+/* ESTILOS VIDEOS Y CURSOS */
+.video-section h1, .cursos-section h1 { font-weight: 900; }
 .video-card { border: 1px solid #333; }
 .video-card h3 { font-weight: 700; font-size: 1rem; letter-spacing: 0.5px;}
-
-/* ESTILOS ESPECÍFICOS PARA CURSOS */
 .curso-card .card-content h3 { font-weight: 700; }
 .btn-curso { font-weight: 700; letter-spacing: 1px;}
+
+
+/* ==========================================================================
+   RESPONSIVE DESIGN (MEDIA QUERIES)
+   ========================================================================== */
+
+/* --- TABLETS (iPads verticales y pantallas medianas: hasta 1024px) --- */
+@media screen and (max-width: 1024px) {
+    
+    /* Header más compacto */
+    header {
+        padding: 15px 20px;
+    }
+    
+    nav ul {
+        gap: 25px; /* Reducimos espacio entre links */
+    }
+    
+    nav a {
+        font-size: 0.9rem;
+    }
+
+    /* Ajuste de textos grandes */
+    .project-link {
+        font-size: 2.8rem;
+    }
+    
+    .hero-text h1 {
+        font-size: 2.5rem;
+    }
+}
+
+/* --- MOVILES (Celulares: hasta 768px) --- */
+@media screen and (max-width: 768px) {
+
+    /* 1. HEADER EN MOVIL: Se apila verticalmente y deja de ser fijo para ganar espacio */
+    header {
+        position: relative; /* Ya no es fijo sobre el contenido */
+        flex-direction: column;
+        padding: 20px;
+        background: #141414; /* Fondo sólido, quitamos transparencia */
+        height: auto;
+    }
+
+    .logo-container {
+        margin-bottom: 20px;
+    }
+
+    nav {
+        margin: 15px 0;
+        width: 100%;
+    }
+
+    nav ul {
+        flex-direction: column; /* Links uno debajo del otro */
+        gap: 15px;
+        width: 100%;
+        padding: 0;
+    }
+
+    .header-social {
+        margin-top: 15px;
+        gap: 30px; /* Iconos más separados para dedos */
+    }
+
+    /* 2. MAIN Y CONTENIDO */
+    main {
+        margin-top: 0; /* Como el header ya no es fijo, quitamos el margen superior */
+    }
+
+    /* 3. CARRUSELES */
+    .carousel-container, .project-hero {
+        height: 50vh; /* Reducimos altura en móvil para ver contenido antes */
+    }
+    
+    /* 4. TIPOGRAFÍA ADAPTADA */
+    h1 {
+        font-size: 2rem !important; /* Forzamos tamaño menor */
+    }
+    
+    p {
+        font-size: 1rem;
+        padding: 0 10px;
+    }
+
+    /* 5. MENÚ DE PROYECTOS (Iztapalapa, Jamaica...) */
+    .project-link {
+        font-size: 2rem; /* Texto más pequeño para que quepa */
+        margin: 25px 0;
+        text-shadow: 1px 1px 5px rgba(0,0,0,1); /* Más sombra para legibilidad */
+    }
+    
+    /* 6. PÁGINAS INTERNAS DE PROYECTOS */
+    .hero-text {
+        padding: 10px;
+    }
+    
+    .project-nav {
+        flex-direction: column; /* Botones de navegación apilados */
+        gap: 20px;
+        text-align: center;
+        align-items: center;
+    }
+    
+    .project-nav a {
+        margin: 0 !important; /* Reseteamos márgenes inline */
+        display: block;
+        padding: 10px;
+        background: #222; /* Fondo suave para que parezca botón */
+        width: 100%;
+        border-radius: 5px;
+    }
+
+    /* 7. CURSOS Y VIDEOS GRID */
+    .cards-container, .video-grid {
+        gap: 20px;
+    }
+
+    .curso-card, .video-card {
+        width: 100%; /* Ocupan todo el ancho disponible */
+        max-width: 100%;
+    }
+    
+    /* 8. ABOUT ME */
+    .about-banner {
+        height: auto; /* Altura automática según texto */
+        min-height: 60vh;
+        padding: 40px 0;
+    }
+    
+    .profile-photo-section img {
+        width: 80%; /* Foto no tan gigante */
+        max-width: 300px;
+    }
+}
