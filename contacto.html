@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Eivinderivas - Home</title>
+    <title>Eivinderivas - Contacto</title>
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;700;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="assets/css/style.css">
@@ -11,9 +11,7 @@
 <body>
 
     <header>
-        <div class="logo-container">
-            <a href="index.html"><img src="assets/img/general/logo.png" alt="Eivinderivas Logo"></a>
-        </div>
+        <div class="logo-container"><a href="index.html"><img src="assets/img/general/logo.png" alt="Eivinderivas"></a></div>
         
         <nav>
             <ul>
@@ -27,21 +25,36 @@
 
         <div class="header-social">
             <a href="https://www.instagram.com/eivind_derivas/" target="_blank"><i class="fa-brands fa-instagram"></i></a>
-            <a href="contacto.html"><i class="fa-regular fa-envelope"></i></a>
+            <a href="contacto.html" class="active"><i class="fa-regular fa-envelope"></i></a>
             <a href="https://www.youtube.com/@Synthgraf_IA" target="_blank"><i class="fa-brands fa-youtube"></i></a>
         </div>
     </header>
 
     <main>
-        <div class="carousel-container">
-            <img class="carousel-slide active" src="assets/img/carruselHOME/carru1.jpg" alt="Foto 1" style="display: block;">
-            <img class="carousel-slide" src="assets/img/carruselHOME/carru2.jpg" alt="Foto 2">
-            <img class="carousel-slide" src="assets/img/carruselHOME/carru3.jpg" alt="Foto 3">
-            <img class="carousel-slide" src="assets/img/carruselHOME/carru4.jpg" alt="Foto 4">
+        <section class="contact-section">
+            <h1>Contacto</h1>
+            <p>Si te interesa mi trabajo, quieres colaborar o tienes alguna duda sobre los cursos, escríbeme.</p>
             
-            <a class="prev" onclick="plusSlides(-1)">&#10094;</a>
-            <a class="next" onclick="plusSlides(1)">&#10095;</a>
-        </div>
+            <form action="PON_AQUI_TU_URL_DE_FORMSPREE" method="POST" class="contact-form">
+                
+                <div class="form-group">
+                    <label for="name">Nombre</label>
+                    <input type="text" id="name" name="name" required placeholder="Tu nombre">
+                </div>
+
+                <div class="form-group">
+                    <label for="email">Correo Electrónico</label>
+                    <input type="email" id="email" name="email" required placeholder="tucorreo@ejemplo.com">
+                </div>
+
+                <div class="form-group">
+                    <label for="message">Mensaje</label>
+                    <textarea id="message" name="message" rows="5" required placeholder="Escribe tu mensaje aquí..."></textarea>
+                </div>
+
+                <button type="submit" class="btn-submit">Enviar Mensaje</button>
+            </form>
+        </section>
     </main>
 
     <footer>
@@ -51,7 +64,6 @@
             <a href="contacto.html"><i class="fa-regular fa-envelope"></i></a>
         </div>
     </footer>
-
     <script src="assets/js/script.js"></script>
 </body>
 </html>

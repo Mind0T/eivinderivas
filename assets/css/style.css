@@ -33,7 +33,7 @@ p {
     line-height: 1.8;
 }
 
-/* HEADER - NUEVA DISTRIBUCIÓN */
+/* HEADER */
 header {
     background: linear-gradient(to bottom, var(--header-gradient-top), var(--header-gradient-bottom));
     padding: 20px 40px;
@@ -44,7 +44,7 @@ header {
     width: 100%;
     top: 0;
     z-index: 1000;
-    transition: all 0.3s ease; /* Suaviza cambios en responsive */
+    transition: all 0.3s ease;
 }
 
 .logo-container img {
@@ -105,7 +105,7 @@ nav a:hover {
 
 /* CONTENEDOR PRINCIPAL */
 main {
-    margin-top: 100px; /* Espacio para el header fijo */
+    margin-top: 100px;
     min-height: 80vh;
 }
 
@@ -118,18 +118,19 @@ main {
     display: flex;
     align-items: center;
     justify-content: center;
+    background-color: #000; /* Fondo negro por si la imagen tarda */
 }
 
 .carousel-slide {
     width: 100%;
     height: 100%;
     object-fit: cover; 
-    display: none; 
+    display: none; /* Oculto por defecto */
 }
 
+/* ¡CORRECCIÓN IMPORTANTE AQUÍ! */
 .carousel-slide.active {
-    display: block;
-    animation: fadeEffect 1s;
+    display: block !important; 
 }
 
 .prev, .next {
@@ -146,16 +147,12 @@ main {
     user-select: none;
     background-color: rgba(0,0,0,0.3);
     border-radius: 3px;
+    z-index: 10; /* Aseguramos que los botones estén sobre la imagen */
 }
 
 .next { right: 0; }
 .prev { left: 0; }
 .prev:hover, .next:hover { background-color: rgba(0,0,0,0.8); }
-
-@keyframes fadeEffect {
-    from {opacity: .4} 
-    to {opacity: 1}
-}
 
 /* FOOTER */
 footer {
@@ -187,7 +184,7 @@ footer .social-icons-footer a:hover {
     background-position: center;
     background-image: url('../img/proyectos/general/fondoProy.jpg');
     transition: background-image 0.5s ease-in-out;
-    text-align: center; /* Asegura centrado en móvil */
+    text-align: center;
 }
 
 .project-link {
@@ -202,14 +199,20 @@ footer .social-icons-footer a:hover {
     transition: transform 0.3s, letter-spacing 0.3s;
 }
 
+/* TEXTO NEGRO Y DELGADO */
+.project-link-dark {
+    font-weight: 300 !important; 
+    color: #000000 !important;   
+    text-shadow: none !important; 
+}
+
 .project-link:hover {
     transform: scale(1.05);
     letter-spacing: 5px; 
 }
 
-/* TEXTO DE PROYECTOS (Detalle de Iztapalapa, Jamaica, etc) */
+/* TEXTO DE PROYECTOS */
 .project-hero {
-    /* Aseguramos que la imagen de fondo se vea bien en cualquier tamaño */
     background-attachment: scroll; 
 }
 
@@ -242,137 +245,83 @@ footer .social-icons-footer a:hover {
 .curso-card .card-content h3 { font-weight: 700; }
 .btn-curso { font-weight: 700; letter-spacing: 1px;}
 
-
-/* ==========================================================================
-   RESPONSIVE DESIGN (MEDIA QUERIES)
-   ========================================================================== */
-
-/* --- TABLETS (iPads verticales y pantallas medianas: hasta 1024px) --- */
-@media screen and (max-width: 1024px) {
-    
-    /* Header más compacto */
-    header {
-        padding: 15px 20px;
-    }
-    
-    nav ul {
-        gap: 25px; /* Reducimos espacio entre links */
-    }
-    
-    nav a {
-        font-size: 0.9rem;
-    }
-
-    /* Ajuste de textos grandes */
-    .project-link {
-        font-size: 2.8rem;
-    }
-    
-    .hero-text h1 {
-        font-size: 2.5rem;
-    }
+/* CONTACTO */
+.contact-section {
+    padding: 50px 20px;
+    max-width: 800px;
+    margin: 0 auto;
+    text-align: center;
 }
 
-/* --- MOVILES (Celulares: hasta 768px) --- */
+.contact-form {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    margin-top: 40px;
+}
+
+.form-group {
+    text-align: left;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: 700;
+    color: #fff;
+}
+
+.form-group input, .form-group textarea {
+    width: 100%;
+    padding: 15px;
+    background: #141414;
+    border: 1px solid #333;
+    color: #fff;
+    font-family: var(--font-main);
+    font-size: 1rem;
+    border-radius: 4px;
+}
+
+.form-group input:focus, .form-group textarea:focus {
+    outline: none;
+    border-color: #fff;
+}
+
+.btn-submit {
+    padding: 15px 30px;
+    background-color: #fff;
+    color: #000;
+    border: none;
+    font-weight: 900;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: background-color 0.3s;
+    font-size: 1rem;
+    align-self: flex-start;
+}
+
+.btn-submit:hover {
+    background-color: #ccc;
+}
+
+/* RESPONSIVE */
+@media screen and (max-width: 1024px) {
+    header { padding: 15px 20px; }
+    nav ul { gap: 25px; }
+    nav a { font-size: 0.9rem; }
+    .project-link { font-size: 2.8rem; }
+    .hero-text h1 { font-size: 2.5rem; }
+}
+
 @media screen and (max-width: 768px) {
-
-    /* 1. HEADER EN MOVIL: Se apila verticalmente y deja de ser fijo para ganar espacio */
-    header {
-        position: relative; /* Ya no es fijo sobre el contenido */
-        flex-direction: column;
-        padding: 20px;
-        background: #141414; /* Fondo sólido, quitamos transparencia */
-        height: auto;
-    }
-
-    .logo-container {
-        margin-bottom: 20px;
-    }
-
-    nav {
-        margin: 15px 0;
-        width: 100%;
-    }
-
-    nav ul {
-        flex-direction: column; /* Links uno debajo del otro */
-        gap: 15px;
-        width: 100%;
-        padding: 0;
-    }
-
-    .header-social {
-        margin-top: 15px;
-        gap: 30px; /* Iconos más separados para dedos */
-    }
-
-    /* 2. MAIN Y CONTENIDO */
-    main {
-        margin-top: 0; /* Como el header ya no es fijo, quitamos el margen superior */
-    }
-
-    /* 3. CARRUSELES */
-    .carousel-container, .project-hero {
-        height: 50vh; /* Reducimos altura en móvil para ver contenido antes */
-    }
-    
-    /* 4. TIPOGRAFÍA ADAPTADA */
-    h1 {
-        font-size: 2rem !important; /* Forzamos tamaño menor */
-    }
-    
-    p {
-        font-size: 1rem;
-        padding: 0 10px;
-    }
-
-    /* 5. MENÚ DE PROYECTOS (Iztapalapa, Jamaica...) */
-    .project-link {
-        font-size: 2rem; /* Texto más pequeño para que quepa */
-        margin: 25px 0;
-        text-shadow: 1px 1px 5px rgba(0,0,0,1); /* Más sombra para legibilidad */
-    }
-    
-    /* 6. PÁGINAS INTERNAS DE PROYECTOS */
-    .hero-text {
-        padding: 10px;
-    }
-    
-    .project-nav {
-        flex-direction: column; /* Botones de navegación apilados */
-        gap: 20px;
-        text-align: center;
-        align-items: center;
-    }
-    
-    .project-nav a {
-        margin: 0 !important; /* Reseteamos márgenes inline */
-        display: block;
-        padding: 10px;
-        background: #222; /* Fondo suave para que parezca botón */
-        width: 100%;
-        border-radius: 5px;
-    }
-
-    /* 7. CURSOS Y VIDEOS GRID */
-    .cards-container, .video-grid {
-        gap: 20px;
-    }
-
-    .curso-card, .video-card {
-        width: 100%; /* Ocupan todo el ancho disponible */
-        max-width: 100%;
-    }
-    
-    /* 8. ABOUT ME */
-    .about-banner {
-        height: auto; /* Altura automática según texto */
-        min-height: 60vh;
-        padding: 40px 0;
-    }
-    
-    .profile-photo-section img {
-        width: 80%; /* Foto no tan gigante */
-        max-width: 300px;
-    }
+    header { position: relative; flex-direction: column; padding: 20px; background: #141414; height: auto; }
+    .logo-container { margin-bottom: 20px; }
+    nav { margin: 15px 0; width: 100%; }
+    nav ul { flex-direction: column; gap: 15px; width: 100%; padding: 0; }
+    .header-social { margin-top: 15px; gap: 30px; }
+    main { margin-top: 0; }
+    .carousel-container, .project-hero { height: 50vh; }
+    h1 { font-size: 2rem !important; }
+    .project-link { font-size: 2rem; margin: 25px 0; }
+    .project-nav { flex-direction: column; gap: 20px; }
 }
