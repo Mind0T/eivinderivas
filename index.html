@@ -74,11 +74,18 @@
             const container = document.getElementById('home-carousel');
             const prevBtn = container.querySelector('.prev');
             
-            // Generar 8 imágenes: carru1.jpg a carru8.jpg
+            // Detectar si es móvil (ancho menor o igual a 768px)
+            // Esto define el prefijo del nombre de la imagen
+            const isMobile = window.innerWidth <= 768;
+            const imgPrefix = isMobile ? 'carrumob' : 'carru';
+            
+            // Generar 8 imágenes: carru1.jpg o carrumob1.jpg hasta el 8
             for (let i = 1; i <= 8; i++) {
                 const img = document.createElement('img');
                 img.className = 'carousel-slide';
-                img.src = `assets/img/carruselHOME/carru${i}.jpg`;
+                
+                // Usamos la variable imgPrefix para decidir qué imagen cargar
+                img.src = `assets/img/carruselHOME/${imgPrefix}${i}.jpg`;
                 img.alt = `Foto Home ${i}`;
                 
                 // La primera imagen debe ser visible (active)
