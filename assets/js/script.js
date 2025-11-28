@@ -150,28 +150,28 @@ document.addEventListener("DOMContentLoaded", function() {
         });
     }
 
-    // --- LÓGICA ESPECIAL PARA MÓVIL (CAMBIO DE FONDO AL SCROLLEAR EN PROYECTOS) ---
+    // --- LÓGICA ESPECIAL PARA MÓVIL (SCROLL TRIGGER EN PROYECTOS) ---
     if (window.innerWidth <= 768 && document.getElementById('projects-container')) {
         const projectLinks = document.querySelectorAll('.project-link');
         
-        // Creamos un observador que se dispara cuando el elemento cruza el CENTRO de la pantalla
         const observerOptions = {
             root: null,
-            rootMargin: '-50% 0px -50% 0px', // Línea invisible en el centro exacto
+            // Zona activa en el centro de la pantalla
+            rootMargin: '-45% 0px -45% 0px', 
             threshold: 0
         };
 
         const observer = new IntersectionObserver((entries) => {
             entries.forEach(entry => {
                 if (entry.isIntersecting) {
-                    // Cambiar fondo
+                    // 1. Cambiar fondo
                     const bgImage = entry.target.getAttribute('data-bg');
                     if (bgImage) {
                         changeBackground(bgImage);
                     }
-                    // Resaltar el texto activo (opacidad)
-                    projectLinks.forEach(l => l.style.opacity = '0.4'); // Opacar inactivos
-                    entry.target.style.opacity = '1'; // Resaltar activo
+                    // 2. Activar viñeta y opacidad mediante clase CSS
+                    projectLinks.forEach(l => l.classList.remove('active-project'));
+                    entry.target.classList.add('active-project');
                 }
             });
         }, observerOptions);

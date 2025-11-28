@@ -211,7 +211,7 @@ footer {
 }
 footer .social-icons-footer a { color: black; font-size: 1.5rem; margin: 0 15px; }
 
-/* PROYECTOS MENU */
+/* PROYECTOS MENU (Estilos Generales/Desktop) */
 .projects-menu {
     height: 100vh; display: flex; flex-direction: column;
     justify-content: center; align-items: center;
@@ -420,7 +420,7 @@ main { margin-top: 100px; min-height: 90vh; }
 }
 
 /* =========================================================
-   BOTÓN VOLVER ARRIBA (Back to Top) - SE MANTIENE
+   BOTÓN VOLVER ARRIBA (Back to Top)
    ========================================================= */
 #backToTop {
     position: fixed;
@@ -428,20 +428,18 @@ main { margin-top: 100px; min-height: 90vh; }
     right: 30px;
     width: 50px;
     height: 50px;
-    background-color: rgba(0, 0, 0, 0.4); /* Negro sutil transparente */
+    background-color: rgba(0, 0, 0, 0.4); 
     color: white;
     border: none;
-    border-radius: 50%; /* Redondo */
+    border-radius: 50%;
     font-size: 1.2rem;
     cursor: pointer;
     z-index: 3000;
     
-    /* Oculto por defecto */
     opacity: 0;
     visibility: hidden;
     transition: opacity 0.4s ease, background-color 0.3s ease, transform 0.3s ease;
     
-    /* Centrar icono */
     display: flex;
     align-items: center;
     justify-content: center;
@@ -456,4 +454,56 @@ main { margin-top: 100px; min-height: 90vh; }
 #backToTop:hover {
     background-color: rgba(0, 0, 0, 0.8);
     transform: translateY(-3px);
+}
+
+/* =========================================================
+   AJUSTES MÓVILES PARA MENÚ PROYECTOS (SCROLL TRIGGER)
+   ========================================================= */
+@media screen and (max-width: 768px) {
+    
+    /* 1. Hacemos que el menú sea mucho más alto para obligar el scroll */
+    .projects-menu {
+        height: auto !important; /* Quitamos el 100vh fijo */
+        min-height: 100vh;
+        justify-content: flex-start; /* Alineamos al inicio */
+        /* Padding masivo: permite que el 1er y último item lleguen al centro */
+        padding-top: 45vh; 
+        padding-bottom: 45vh;
+    }
+
+    /* 2. Estilos para cada item en móvil */
+    .project-link {
+        font-size: 2.5rem; /* Tamaño más cómodo para móvil */
+        margin: 40px 0; /* Espacio entre ellos */
+        opacity: 0.3; /* Apagados por defecto */
+        transition: opacity 0.3s ease, transform 0.3s ease;
+        position: relative; /* Para posicionar la viñeta */
+        display: inline-block; /* Importante para que la viñeta se pegue al texto */
+    }
+
+    /* 3. CLASE ACTIVA (Cuando cruza el centro) */
+    .project-link.active-project {
+        opacity: 1 !important;
+        transform: scale(1.1); /* Ligero zoom */
+    }
+
+    /* 4. LA VIÑETA (El punto indicador) */
+    .project-link.active-project::before {
+        content: '';
+        position: absolute;
+        left: -25px; /* Posición a la izquierda del texto */
+        top: 50%;
+        transform: translateY(-50%);
+        width: 10px;
+        height: 10px;
+        background-color: #fff; /* Color de la viñeta */
+        border-radius: 50%;
+        box-shadow: 0 0 10px rgba(255, 255, 255, 0.8); /* Brillo */
+        animation: fadeInDot 0.3s ease-in-out;
+    }
+}
+
+@keyframes fadeInDot {
+    from { opacity: 0; transform: translateY(-50%) scale(0); }
+    to { opacity: 1; transform: translateY(-50%) scale(1); }
 }
