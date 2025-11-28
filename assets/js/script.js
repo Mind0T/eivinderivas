@@ -108,26 +108,18 @@ document.addEventListener("DOMContentLoaded", function() {
             img.className = 'gallery-item';
             img.onclick = function() { openLightbox(i); };
             
-            // LÓGICA DE POSICIONAMIENTO CORREGIDA
             img.onload = function() {
                 const isPortrait = this.naturalHeight > this.naturalWidth;
-
                 if (isPortrait) {
                     this.classList.add('is-portrait');
-                    
-                    // Usamos el modulo (%) para crear un ciclo determinista:
-                    // Esto asegura que 1, 2, 3 siempre tengan posiciones distintas.
-                    // i % 3 puede ser 0, 1 o 2.
                     const positionIndex = i % 3;
-
                     if (positionIndex === 1) {
-                        this.classList.add('align-left');   // Fotos 1, 4, 7...
+                        this.classList.add('align-left');
                     } else if (positionIndex === 2) {
-                        this.classList.add('align-center'); // Fotos 2, 5, 8...
+                        this.classList.add('align-center');
                     } else {
-                        this.classList.add('align-right');  // Fotos 3, 6, 9...
+                        this.classList.add('align-right');
                     }
-
                 } else {
                     this.classList.add('is-landscape');
                     this.classList.add('align-center');
@@ -156,5 +148,34 @@ document.addEventListener("DOMContentLoaded", function() {
                 behavior: "smooth"
             });
         });
+    }
+
+    // --- LÓGICA ESPECIAL PARA MÓVIL (CAMBIO DE FONDO AL SCROLLEAR EN PROYECTOS) ---
+    if (window.innerWidth <= 768 && document.getElementById('projects-container')) {
+        const projectLinks = document.querySelectorAll('.project-link');
+        
+        // Creamos un observador que se dispara cuando el elemento cruza el CENTRO de la pantalla
+        const observerOptions = {
+            root: null,
+            rootMargin: '-50% 0px -50% 0px', // Línea invisible en el centro exacto
+            threshold: 0
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    // Cambiar fondo
+                    const bgImage = entry.target.getAttribute('data-bg');
+                    if (bgImage) {
+                        changeBackground(bgImage);
+                    }
+                    // Resaltar el texto activo (opacidad)
+                    projectLinks.forEach(l => l.style.opacity = '0.4'); // Opacar inactivos
+                    entry.target.style.opacity = '1'; // Resaltar activo
+                }
+            });
+        }, observerOptions);
+
+        projectLinks.forEach(link => observer.observe(link));
     }
 });
