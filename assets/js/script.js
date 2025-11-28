@@ -1,6 +1,8 @@
 document.addEventListener("DOMContentLoaded", function() {
     
-    // --- LÓGICA DEL CARRUSEL PRINCIPAL (HOME) ---
+    // =========================================================
+    //   LÓGICA DEL CARRUSEL PRINCIPAL (HOME)
+    // =========================================================
     let slideIndex = 1;
     let slideInterval;
     const slides = document.getElementsByClassName("carousel-slide");
@@ -35,7 +37,9 @@ document.addEventListener("DOMContentLoaded", function() {
         }
     }
 
-    // --- UTILS (Fondos, Menú, Lightbox) ---
+    // =========================================================
+    //   UTILIDADES (Fondos, Menú Móvil)
+    // =========================================================
     window.changeBackground = function(imageName) {
         const container = document.getElementById('projects-container');
         if(container) container.style.backgroundImage = `url('assets/img/proyectos/general/${imageName}')`;
@@ -43,7 +47,7 @@ document.addEventListener("DOMContentLoaded", function() {
 
     window.resetBackground = function() {
         const container = document.getElementById('projects-container');
-        // En móvil NO reseteamos al fondo por defecto para que no "parpadee" entre cambios automáticos
+        // En desktop regresamos al fondo default. En móvil no, para evitar parpadeos.
         if(window.innerWidth > 768 && container) {
             container.style.backgroundImage = "url('assets/img/proyectos/general/fondoProy.jpg')";
         }
@@ -60,39 +64,56 @@ document.addEventListener("DOMContentLoaded", function() {
         closeMenu.addEventListener('click', function() { mobileMenu.classList.remove('active'); });
     }
 
-    // --- LOGICA LIGHTBOX ---
+    // =========================================================
+    //   LÓGICA LIGHTBOX (VISOR DE IMÁGENES)
+    // =========================================================
     let lightboxIndex = 1;
+    
     window.openLightbox = function(n) {
         const lightbox = document.getElementById('myLightbox');
         if(lightbox) {
-            lightbox.style.display = "flex"; lightbox.style.justifyContent = "center"; lightbox.style.alignItems = "center";
+            lightbox.style.display = "flex"; 
+            lightbox.style.justifyContent = "center"; 
+            lightbox.style.alignItems = "center";
             currentLightboxSlide(n);
         }
     };
+
     window.closeLightbox = function() {
         const lightbox = document.getElementById('myLightbox');
         if(lightbox) lightbox.style.display = "none";
     };
+
     window.plusLightboxSlides = function(n) { showLightboxSlides(lightboxIndex += n); };
     window.currentLightboxSlide = function(n) { showLightboxSlides(lightboxIndex = n); };
 
     function showLightboxSlides(n) {
-        let originalImages = document.querySelectorAll('.project-carousel-frame .carousel-slide');
-        if (originalImages.length === 0) {
-            originalImages = document.querySelectorAll('.scroll-gallery-container .gallery-item');
-        }
+        // Detectamos cuántas imágenes hay actualmente en la galería (dinámico)
+        let galleryImages = document.querySelectorAll('.scroll-gallery-container .gallery-item');
+        let carrouselImages = document.querySelectorAll('.project-carousel-frame .carousel-slide');
+        
+        let originalImages = galleryImages.length > 0 ? galleryImages : carrouselImages;
+
         const lightboxImg = document.getElementById("lightbox-img");
         if (!originalImages.length || !lightboxImg) return;
-        if (n > originalImages.length) {lightboxIndex = 1}
-        if (n < 1) {lightboxIndex = originalImages.length}
+        
+        // Navegación circular
+        if (n > originalImages.length) { lightboxIndex = 1; }
+        else if (n < 1) { lightboxIndex = originalImages.length; }
+        else { lightboxIndex = n; }
+
+        // Actualizamos la fuente del lightbox con la imagen correspondiente
         lightboxImg.src = originalImages[lightboxIndex-1].src;
     }
 
-    // --- LÓGICA DE GALERÍA SCROLL (EDITORIAL) ---
-    window.initScrollGallery = function(folderPath, imagePrefix, totalImages) {
+    // =========================================================
+    //   GALERÍA INTELIGENTE (AUTO-DETECCIÓN DE IMÁGENES)
+    // =========================================================
+    window.initScrollGallery = function(folderPath, imagePrefix) {
         const container = document.getElementById('scroll-gallery');
         if (!container) return;
 
+        // Configuración para la animación de entrada (fade-in)
         const observerOptions = { root: null, rootMargin: '0px', threshold: 0.15 };
         const observer = new IntersectionObserver((entries, observer) => {
             entries.forEach(entry => {
@@ -103,32 +124,59 @@ document.addEventListener("DOMContentLoaded", function() {
             });
         }, observerOptions);
 
-        for (let i = 1; i <= totalImages; i++) {
-            const img = document.createElement('img');
-            img.src = `${folderPath}/${imagePrefix}${i}.jpg`;
-            img.alt = `Foto ${i}`;
-            img.className = 'gallery-item';
-            img.onclick = function() { openLightbox(i); };
+        // Función recursiva que intenta cargar imagen por imagen
+        function tryLoadImage(index) {
+            const imgObj = new Image(); 
+            const src = `${folderPath}/${imagePrefix}${index}.jpg`;
             
-            img.onload = function() {
-                const isPortrait = this.naturalHeight > this.naturalWidth;
-                if (isPortrait) {
-                    this.classList.add('is-portrait');
-                    const positionIndex = i % 3;
-                    if (positionIndex === 1) { this.classList.add('align-left'); } 
-                    else if (positionIndex === 2) { this.classList.add('align-center'); } 
-                    else { this.classList.add('align-right'); }
+            imgObj.src = src;
+
+            // CASO 1: La imagen EXISTE
+            imgObj.onload = function() {
+                // Creamos el elemento HTML real
+                const domImg = document.createElement('img');
+                domImg.src = src;
+                domImg.alt = `Foto ${index} - Eivind Street`;
+                domImg.className = 'gallery-item';
+                
+                // Asignamos el click para abrir el Lightbox en el índice correcto
+                domImg.onclick = function() { openLightbox(index); };
+
+                // Detectamos si es Vertical u Horizontal para el estilo
+                if (this.naturalHeight > this.naturalWidth) {
+                    domImg.classList.add('is-portrait');
+                    // Patrón de alineación estética: Izquierda, Centro, Derecha
+                    const pos = index % 3; 
+                    if (pos === 1) domImg.classList.add('align-left');
+                    else if (pos === 2) domImg.classList.add('align-center');
+                    else domImg.classList.add('align-right');
                 } else {
-                    this.classList.add('is-landscape');
-                    this.classList.add('align-center');
+                    domImg.classList.add('is-landscape');
+                    domImg.classList.add('align-center');
                 }
+
+                // Insertamos en el DOM
+                container.appendChild(domImg);
+                observer.observe(domImg);
+
+                // ¡IMPORTANTE! Intentamos cargar la siguiente imagen (n+1)
+                tryLoadImage(index + 1);
             };
-            container.appendChild(img);
-            observer.observe(img);
+
+            // CASO 2: La imagen NO EXISTE (Error 404) -> Fin del bucle
+            imgObj.onerror = function() {
+                // Se detiene silenciosamente, ya no busca más fotos.
+                console.log(`Galería cargada completamente. Total: ${index - 1} imágenes.`);
+            };
         }
+
+        // Iniciamos el proceso con la imagen número 1
+        tryLoadImage(1);
     };
 
-    // --- BOTÓN BACK TO TOP ---
+    // =========================================================
+    //   BOTÓN BACK TO TOP
+    // =========================================================
     const backToTopBtn = document.getElementById("backToTop");
     if(backToTopBtn) {
         window.addEventListener("scroll", function() {
@@ -140,42 +188,29 @@ document.addEventListener("DOMContentLoaded", function() {
         });
     }
 
-    // =========================================================================
-    //   LÓGICA AUTOMÁTICA PARA MÓVIL (AUTO-PLAY EN PROYECTOS)
-    // =========================================================================
+    // =========================================================
+    //   AUTO-PLAY EN MENÚ PROYECTOS (MÓVIL)
+    // =========================================================
     if (window.innerWidth <= 768 && document.getElementById('projects-container')) {
         const projectLinks = document.querySelectorAll('.project-link');
-        let currentIndex = 0;
+        let currentProjIndex = 0;
         const totalProjects = projectLinks.length;
-        const cycleTime = 2500; // Tiempo en milisegundos (2.5 segundos por proyecto)
+        const cycleTime = 2500;
 
         function activateProject(index) {
-            // 1. Quitar clase activa a todos
             projectLinks.forEach(link => link.classList.remove('active-project'));
-            
             if(projectLinks[index]) {
-                // 2. Poner clase activa al actual
                 const activeLink = projectLinks[index];
                 activeLink.classList.add('active-project');
-                
-                // 3. Cambiar fondo
                 const bgImage = activeLink.getAttribute('data-bg');
-                if (bgImage) {
-                    changeBackground(bgImage);
-                }
+                if (bgImage) changeBackground(bgImage);
             }
         }
-
-        // Iniciar inmediatamente con el primero
         activateProject(0);
-
-        // Iniciar el ciclo automático
         setInterval(() => {
-            currentIndex++;
-            if (currentIndex >= totalProjects) {
-                currentIndex = 0; // Regresar al primero al terminar
-            }
-            activateProject(currentIndex);
+            currentProjIndex++;
+            if (currentProjIndex >= totalProjects) currentProjIndex = 0;
+            activateProject(currentProjIndex);
         }, cycleTime);
     }
 });
