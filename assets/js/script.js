@@ -5,7 +5,6 @@ document.addEventListener("DOMContentLoaded", function() {
     let slideInterval;
     const slides = document.getElementsByClassName("carousel-slide");
     
-    // Solo iniciar autoplay si existen slides en la página (para el Home)
     if (slides.length > 0 && document.getElementById('home-carousel')) {
         showSlides(slideIndex);
         startAutoSlide();
@@ -44,7 +43,10 @@ document.addEventListener("DOMContentLoaded", function() {
 
     window.resetBackground = function() {
         const container = document.getElementById('projects-container');
-        if(container) container.style.backgroundImage = "url('assets/img/proyectos/general/fondoProy.jpg')";
+        // En móvil NO reseteamos al fondo por defecto para que no "parpadee" entre cambios automáticos
+        if(window.innerWidth > 768 && container) {
+            container.style.backgroundImage = "url('assets/img/proyectos/general/fondoProy.jpg')";
+        }
     };
 
     const menuToggle = document.getElementById('mobile-menu-btn');
@@ -113,69 +115,67 @@ document.addEventListener("DOMContentLoaded", function() {
                 if (isPortrait) {
                     this.classList.add('is-portrait');
                     const positionIndex = i % 3;
-                    if (positionIndex === 1) {
-                        this.classList.add('align-left');
-                    } else if (positionIndex === 2) {
-                        this.classList.add('align-center');
-                    } else {
-                        this.classList.add('align-right');
-                    }
+                    if (positionIndex === 1) { this.classList.add('align-left'); } 
+                    else if (positionIndex === 2) { this.classList.add('align-center'); } 
+                    else { this.classList.add('align-right'); }
                 } else {
                     this.classList.add('is-landscape');
                     this.classList.add('align-center');
                 }
             };
-
             container.appendChild(img);
             observer.observe(img);
         }
     };
 
-    // --- BOTÓN BACK TO TOP (VOLVER ARRIBA) ---
+    // --- BOTÓN BACK TO TOP ---
     const backToTopBtn = document.getElementById("backToTop");
     if(backToTopBtn) {
         window.addEventListener("scroll", function() {
-            if (window.scrollY > 400) {
-                backToTopBtn.classList.add("show");
-            } else {
-                backToTopBtn.classList.remove("show");
-            }
+            if (window.scrollY > 400) { backToTopBtn.classList.add("show"); } 
+            else { backToTopBtn.classList.remove("show"); }
         });
-
         backToTopBtn.addEventListener("click", function() {
-            window.scrollTo({
-                top: 0,
-                behavior: "smooth"
-            });
+            window.scrollTo({ top: 0, behavior: "smooth" });
         });
     }
 
-    // --- LÓGICA ESPECIAL PARA MÓVIL (SCROLL TRIGGER EN PROYECTOS) ---
+    // =========================================================================
+    //   LÓGICA AUTOMÁTICA PARA MÓVIL (AUTO-PLAY EN PROYECTOS)
+    // =========================================================================
     if (window.innerWidth <= 768 && document.getElementById('projects-container')) {
         const projectLinks = document.querySelectorAll('.project-link');
-        
-        const observerOptions = {
-            root: null,
-            // Zona activa en el centro de la pantalla
-            rootMargin: '-45% 0px -45% 0px', 
-            threshold: 0
-        };
+        let currentIndex = 0;
+        const totalProjects = projectLinks.length;
+        const cycleTime = 2500; // Tiempo en milisegundos (2.5 segundos por proyecto)
 
-        const observer = new IntersectionObserver((entries) => {
-            entries.forEach(entry => {
-                if (entry.isIntersecting) {
-                    // 1. Cambiar fondo
-                    const bgImage = entry.target.getAttribute('data-bg');
-                    if (bgImage) {
-                        changeBackground(bgImage);
-                    }
-                    // 2. Activar viñeta y opacidad mediante clase CSS
-                    projectLinks.forEach(l => l.classList.remove('active-project'));
-                    entry.target.classList.add('active-project');
+        function activateProject(index) {
+            // 1. Quitar clase activa a todos
+            projectLinks.forEach(link => link.classList.remove('active-project'));
+            
+            if(projectLinks[index]) {
+                // 2. Poner clase activa al actual
+                const activeLink = projectLinks[index];
+                activeLink.classList.add('active-project');
+                
+                // 3. Cambiar fondo
+                const bgImage = activeLink.getAttribute('data-bg');
+                if (bgImage) {
+                    changeBackground(bgImage);
                 }
-            });
-        }, observerOptions);
+            }
+        }
 
-        projectLinks.forEach(link => observer.observe(link));
+        // Iniciar inmediatamente con el primero
+        activateProject(0);
+
+        // Iniciar el ciclo automático
+        setInterval(() => {
+            currentIndex++;
+            if (currentIndex >= totalProjects) {
+                currentIndex = 0; // Regresar al primero al terminar
+            }
+            activateProject(currentIndex);
+        }, cycleTime);
     }
 });

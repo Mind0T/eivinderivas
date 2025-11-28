@@ -457,53 +457,55 @@ main { margin-top: 100px; min-height: 90vh; }
 }
 
 /* =========================================================
-   AJUSTES MÓVILES PARA MENÚ PROYECTOS (SCROLL TRIGGER)
+   AJUSTES MÓVILES: MODO AUTOMÁTICO (AUTO-PLAY)
    ========================================================= */
 @media screen and (max-width: 768px) {
     
-    /* 1. Hacemos que el menú sea mucho más alto para obligar el scroll */
+    /* 1. Volvemos a un diseño centrado y limpio */
     .projects-menu {
-        height: auto !important; /* Quitamos el 100vh fijo */
-        min-height: 100vh;
-        justify-content: flex-start; /* Alineamos al inicio */
-        /* Padding masivo: permite que el 1er y último item lleguen al centro */
-        padding-top: 45vh; 
-        padding-bottom: 45vh;
+        height: 100vh !important; /* Altura completa fija */
+        justify-content: center; /* Centrado vertical */
+        padding-top: 0; 
+        padding-bottom: 0;
     }
 
-    /* 2. Estilos para cada item en móvil */
+    /* 2. Estilos para los enlaces en móvil */
     .project-link {
-        font-size: 2.5rem; /* Tamaño más cómodo para móvil */
-        margin: 40px 0; /* Espacio entre ellos */
-        opacity: 0.3; /* Apagados por defecto */
-        transition: opacity 0.3s ease, transform 0.3s ease;
-        position: relative; /* Para posicionar la viñeta */
-        display: inline-block; /* Importante para que la viñeta se pegue al texto */
+        font-size: 2.2rem; 
+        margin: 25px 0; 
+        opacity: 0.4; /* Apagados por defecto */
+        transition: opacity 0.5s ease, transform 0.5s ease; /* Transición suave */
+        position: relative; 
+        display: inline-block;
+        /* Permitir clicks aunque esté en auto-play */
+        pointer-events: auto; 
     }
 
-    /* 3. CLASE ACTIVA (Cuando cruza el centro) */
+    /* 3. CLASE ACTIVA (Controlada por JS automáticamente) */
     .project-link.active-project {
         opacity: 1 !important;
-        transform: scale(1.1); /* Ligero zoom */
+        transform: scale(1.15); /* Zoom notorio */
+        text-shadow: 0 0 15px rgba(255,255,255,0.6);
     }
 
-    /* 4. LA VIÑETA (El punto indicador) */
+    /* 4. LA VIÑETA (Indicador visual automático) */
     .project-link.active-project::before {
         content: '';
         position: absolute;
-        left: -25px; /* Posición a la izquierda del texto */
+        left: -25px; 
         top: 50%;
         transform: translateY(-50%);
         width: 10px;
         height: 10px;
-        background-color: #fff; /* Color de la viñeta */
+        background-color: #fff; 
         border-radius: 50%;
-        box-shadow: 0 0 10px rgba(255, 255, 255, 0.8); /* Brillo */
-        animation: fadeInDot 0.3s ease-in-out;
+        box-shadow: 0 0 12px rgba(255, 255, 255, 1); 
+        animation: pulseDot 2s infinite;
     }
 }
 
-@keyframes fadeInDot {
-    from { opacity: 0; transform: translateY(-50%) scale(0); }
-    to { opacity: 1; transform: translateY(-50%) scale(1); }
+@keyframes pulseDot {
+    0% { transform: translateY(-50%) scale(1); opacity: 1; }
+    50% { transform: translateY(-50%) scale(1.3); opacity: 0.7; }
+    100% { transform: translateY(-50%) scale(1); opacity: 1; }
 }
