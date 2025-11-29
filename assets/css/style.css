@@ -469,21 +469,22 @@ main { margin-top: 100px; min-height: 90vh; }
         padding-bottom: 0;
     }
 
-    /* 2. Estilos para los enlaces en móvil (FUENTE REDUCIDA) */
+    /* 2. Estilos para los enlaces en móvil */
     .project-link {
-        font-size: 1.5rem; /* REDUCIDO de 2.2rem para que quepa bien */
+        font-size: 2.2rem; 
         margin: 25px 0; 
-        opacity: 0.4; 
-        transition: opacity 0.5s ease, transform 0.5s ease; 
+        opacity: 0.4; /* Apagados por defecto */
+        transition: opacity 0.5s ease, transform 0.5s ease; /* Transición suave */
         position: relative; 
         display: inline-block;
+        /* Permitir clicks aunque esté en auto-play */
         pointer-events: auto; 
     }
 
     /* 3. CLASE ACTIVA (Controlada por JS automáticamente) */
     .project-link.active-project {
         opacity: 1 !important;
-        transform: scale(1.15); /* Zoom */
+        transform: scale(1.15); /* Zoom notorio */
         text-shadow: 0 0 15px rgba(255,255,255,0.6);
     }
 
@@ -491,7 +492,7 @@ main { margin-top: 100px; min-height: 90vh; }
     .project-link.active-project::before {
         content: '';
         position: absolute;
-        left: -20px; /* Ajustado ligeramente */
+        left: -25px; 
         top: 50%;
         transform: translateY(-50%);
         width: 10px;
