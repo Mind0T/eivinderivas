@@ -13,7 +13,9 @@ document.addEventListener("DOMContentLoaded", function() {
         if (!container) return;
 
         const prevBtn = container.querySelector('.prev'); 
-        const isMobile = window.innerWidth <= 768;
+        
+        // Límite 1024px para cubrir Tablets y Móviles apaisados
+        const isMobile = window.innerWidth <= 1024;
         const imgPrefix = isMobile ? 'carrumob' : 'carru';
         const totalImages = 8; 
 
@@ -22,7 +24,6 @@ document.addEventListener("DOMContentLoaded", function() {
             domImg.className = 'carousel-slide'; 
             domImg.src = `assets/img/carruselHOME/${imgPrefix}${i}.jpg`;
             domImg.alt = `Portada Eivind Street ${i}`;
-            // Optimización: Lazy load excepto la primera
             if (i > 1) domImg.loading = "lazy";
             
             container.insertBefore(domImg, prevBtn);
@@ -72,7 +73,7 @@ document.addEventListener("DOMContentLoaded", function() {
 
     window.resetBackground = function() {
         const container = document.getElementById('projects-container');
-        if(window.innerWidth > 768 && container) {
+        if(window.innerWidth > 1024 && container) {
             container.style.backgroundImage = "url('assets/img/proyectos/general/fondoProy.jpg')";
         }
     };
@@ -89,7 +90,7 @@ document.addEventListener("DOMContentLoaded", function() {
     }
 
     // =========================================================
-    //   3. LÓGICA LIGHTBOX (HÍBRIDO: DESKTOP vs MÓVIL NATIVO)
+    //   3. LÓGICA LIGHTBOX (HÍBRIDO + FULLSCREEN + INSTANT JUMP)
     // =========================================================
     let lightboxIndex = 1;
     
@@ -99,52 +100,88 @@ document.addEventListener("DOMContentLoaded", function() {
 
         lightbox.style.display = "flex"; 
         
-        // OCULTAR EL BOTÓN BACK TO TOP AL ABRIR
+        // Ocultar BackToTop
         const backToTop = document.getElementById("backToTop");
         if(backToTop) backToTop.style.display = "none";
 
-        // --- DETECCIÓN MÓVIL vs DESKTOP ---
-        if (window.innerWidth <= 768) {
+        // --- MODO MÓVIL / TABLET (<= 1024px) ---
+        if (window.innerWidth <= 1024) {
+            // 1. Activar Pantalla Completa (Fullscreen API)
+            toggleFullScreen(lightbox);
+            
+            // 2. Construir galería y saltar instantáneamente
             buildMobileGallery(n);
         } else {
+            // --- MODO ESCRITORIO ---
             lightbox.style.justifyContent = "center"; 
             lightbox.style.alignItems = "center";
             currentLightboxSlide(n);
         }
 
+        // Guardar estado en historial
         history.pushState({lightboxOpen: true}, "", "#lightbox");
     };
 
     window.closeLightbox = function() {
+        // Salir de Fullscreen si está activo
+        exitFullScreen();
+
         if (history.state && history.state.lightboxOpen) {
             history.back(); 
         } else {
-            const lightbox = document.getElementById('myLightbox');
-            if(lightbox) lightbox.style.display = "none";
-            
-            const snapWrapper = document.getElementById('mobileSnapWrapper');
-            if(snapWrapper) snapWrapper.innerHTML = ''; 
-            
-            // MOSTRAR DE NUEVO EL BOTÓN BACK TO TOP
-            const backToTop = document.getElementById("backToTop");
-            if(backToTop && window.scrollY > 400) backToTop.style.display = "flex";
+            closeLightboxLogic();
         }
     };
 
+    // Lógica interna para cerrar visualmente
+    function closeLightboxLogic() {
+        const lightbox = document.getElementById('myLightbox');
+        if(lightbox) lightbox.style.display = "none";
+        
+        const snapWrapper = document.getElementById('mobileSnapWrapper');
+        if(snapWrapper) snapWrapper.innerHTML = ''; 
+        
+        const backToTop = document.getElementById("backToTop");
+        if(backToTop && window.scrollY > 400) backToTop.style.display = "flex";
+    }
+
+    // Manejar botón "Atrás" del celular
     window.addEventListener('popstate', function(event) {
+        exitFullScreen(); // Asegurar salir de fullscreen al dar atrás
+        
         const lightbox = document.getElementById('myLightbox');
         if(lightbox && lightbox.style.display === "flex") {
-            lightbox.style.display = "none";
-            const snapWrapper = document.getElementById('mobileSnapWrapper');
-            if(snapWrapper) snapWrapper.innerHTML = '';
-
-            // MOSTRAR DE NUEVO EL BOTÓN BACK TO TOP
-            const backToTop = document.getElementById("backToTop");
-            if(backToTop && window.scrollY > 400) backToTop.style.display = "flex";
+            closeLightboxLogic();
         }
     });
 
-    // --- LÓGICA DESKTOP ---
+    // --- FUNCIONES FULLSCREEN ---
+    function toggleFullScreen(elem) {
+        if (!document.fullscreenElement) {
+            if (elem.requestFullscreen) {
+                elem.requestFullscreen().catch(err => {
+                    console.log(`Error al intentar pantalla completa: ${err.message}`);
+                });
+            } else if (elem.webkitRequestFullscreen) { /* Safari */
+                elem.webkitRequestFullscreen();
+            } else if (elem.msRequestFullscreen) { /* IE11 */
+                elem.msRequestFullscreen();
+            }
+        }
+    }
+
+    function exitFullScreen() {
+        if (document.fullscreenElement || document.webkitFullscreenElement) {
+            if (document.exitFullscreen) {
+                document.exitFullscreen().catch(err => console.log(err));
+            } else if (document.webkitExitFullscreen) {
+                document.webkitExitFullscreen();
+            }
+        }
+    }
+
+
+    // --- LÓGICA ESCRITORIO ---
     window.plusLightboxSlides = function(n) { showLightboxSlides(lightboxIndex += n); };
     window.currentLightboxSlide = function(n) { showLightboxSlides(lightboxIndex = n); };
 
@@ -163,10 +200,11 @@ document.addEventListener("DOMContentLoaded", function() {
         lightboxImg.src = originalImages[lightboxIndex-1].src;
     }
 
-    // --- LÓGICA MÓVIL (CONSTRUCCIÓN DINÁMICA) ---
+    // --- LÓGICA MÓVIL OPTIMIZADA (SIN BARRIDO / SWEEP) ---
     function buildMobileGallery(startIndex) {
         const lightbox = document.getElementById('myLightbox');
         let snapWrapper = document.getElementById('mobileSnapWrapper');
+        
         if (!snapWrapper) {
             snapWrapper = document.createElement('div');
             snapWrapper.id = 'mobileSnapWrapper';
@@ -180,24 +218,37 @@ document.addEventListener("DOMContentLoaded", function() {
         let carrouselImages = document.querySelectorAll('#home-carousel .carousel-slide');
         let originalImages = galleryImages.length > 0 ? galleryImages : carrouselImages;
 
+        // Construir DOM
         originalImages.forEach((img) => {
             const itemDiv = document.createElement('div');
             itemDiv.className = 'mobile-snap-item';
             const newImg = document.createElement('img');
             newImg.src = img.src;
             newImg.alt = img.alt;
-            newImg.loading = "lazy"; // Optimización
+            newImg.loading = "lazy"; 
             itemDiv.appendChild(newImg);
             snapWrapper.appendChild(itemDiv);
         });
 
-        setTimeout(() => {
-            const width = window.innerWidth;
-            snapWrapper.scrollTo({
-                left: (startIndex - 1) * width,
-                behavior: 'auto' 
-            });
-        }, 10);
+        // === MAGIA PARA EVITAR EL BARRIDO (SWEEP) ===
+        // 1. Desactivamos el "imán" y el scroll suave temporalmente
+        snapWrapper.style.scrollSnapType = 'none';
+        snapWrapper.style.scrollBehavior = 'auto';
+
+        // 2. Calculamos la posición exacta
+        const width = window.innerWidth;
+        const targetPos = (startIndex - 1) * width;
+
+        // 3. Saltamos inmediatamente (Teletransportación)
+        snapWrapper.scrollLeft = targetPos;
+
+        // 4. Reactivamos el "imán" después de un frame para que el usuario pueda deslizar
+        requestAnimationFrame(() => {
+            setTimeout(() => {
+                snapWrapper.style.scrollSnapType = 'x mandatory';
+                snapWrapper.style.scrollBehavior = 'smooth';
+            }, 50); // Pequeño delay para asegurar que el navegador ya renderizó el salto
+        });
     }
 
 
@@ -223,7 +274,7 @@ document.addEventListener("DOMContentLoaded", function() {
             domImg.src = `${folderPath}/${imagePrefix}${i}.jpg`;
             domImg.alt = `Foto ${i} - Eivind Street`;
             domImg.className = 'gallery-item';
-            domImg.loading = "lazy"; // Optimización IMPORTANTE
+            domImg.loading = "lazy";
             
             domImg.onclick = function() { openLightbox(i); };
 
@@ -250,13 +301,13 @@ document.addEventListener("DOMContentLoaded", function() {
     const backToTopBtn = document.getElementById("backToTop");
     if(backToTopBtn) {
         window.addEventListener("scroll", function() {
-            // Verificar si el lightbox está abierto para no mostrar el botón
             const lightbox = document.getElementById('myLightbox');
-            const isLightboxOpen = lightbox && lightbox.style.display === 'flex';
+            // Verificación extra segura
+            const isLightboxOpen = lightbox && (lightbox.style.display === 'flex' || lightbox.style.display === 'block');
 
             if (window.scrollY > 400 && !isLightboxOpen) { 
                 backToTopBtn.classList.add("show"); 
-                backToTopBtn.style.display = "flex"; // Asegurar que sea visible
+                backToTopBtn.style.display = "flex"; 
             } else { 
                 backToTopBtn.classList.remove("show"); 
             }
@@ -269,7 +320,7 @@ document.addEventListener("DOMContentLoaded", function() {
     // =========================================================
     //   6. AUTO-PLAY MENÚ MÓVIL
     // =========================================================
-    if (window.innerWidth <= 768 && document.getElementById('projects-container')) {
+    if (window.innerWidth <= 1024 && document.getElementById('projects-container')) {
         const projectLinks = document.querySelectorAll('.project-link');
         let currentProjIndex = 0;
         const totalProjects = projectLinks.length;
