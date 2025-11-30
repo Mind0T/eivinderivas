@@ -14,7 +14,7 @@ document.addEventListener("DOMContentLoaded", function() {
 
         const prevBtn = container.querySelector('.prev'); 
         
-        // RESTAURADO A 768px
+        // 768px para proteger visualización Desktop
         const isMobile = window.innerWidth <= 768;
         const imgPrefix = isMobile ? 'carrumob' : 'carru';
         const totalImages = 8; 
@@ -24,6 +24,7 @@ document.addEventListener("DOMContentLoaded", function() {
             domImg.className = 'carousel-slide'; 
             domImg.src = `assets/img/carruselHOME/${imgPrefix}${i}.jpg`;
             domImg.alt = `Portada Eivind Street ${i}`;
+            // Lazy loading aquí está bien (no afecta animación de entrada)
             if (i > 1) domImg.loading = "lazy";
             
             container.insertBefore(domImg, prevBtn);
@@ -73,7 +74,6 @@ document.addEventListener("DOMContentLoaded", function() {
 
     window.resetBackground = function() {
         const container = document.getElementById('projects-container');
-        // RESTAURADO A 768px
         if(window.innerWidth > 768 && container) {
             container.style.backgroundImage = "url('assets/img/proyectos/general/fondoProy.jpg')";
         }
@@ -91,7 +91,7 @@ document.addEventListener("DOMContentLoaded", function() {
     }
 
     // =========================================================
-    //   3. LÓGICA LIGHTBOX (HÍBRIDO + FULLSCREEN + INSTANT JUMP + ZOOM)
+    //   3. LÓGICA LIGHTBOX (FULLSCREEN REAL + ZOOM)
     // =========================================================
     let lightboxIndex = 1;
     
@@ -101,38 +101,38 @@ document.addEventListener("DOMContentLoaded", function() {
 
         lightbox.style.display = "flex"; 
         
-        // Ocultar BackToTop
         const backToTop = document.getElementById("backToTop");
         if(backToTop) backToTop.style.display = "none";
 
-        // RESTAURADO A 768px
+        // LÓGICA MÓVIL (<= 768px)
         if (window.innerWidth <= 768) {
-            // 1. Activar Pantalla Completa
-            toggleFullScreen(lightbox);
-            
-            // 2. Construir galería y saltar instantáneamente
+            toggleFullScreen(lightbox); 
             buildMobileGallery(n);
         } else {
-            // --- MODO ESCRITORIO ---
+            // LÓGICA ESCRITORIO
             lightbox.style.justifyContent = "center"; 
             lightbox.style.alignItems = "center";
             currentLightboxSlide(n);
         }
 
+        // Empujar estado para botón atrás
         history.pushState({lightboxOpen: true}, "", "#lightbox");
     };
 
     window.closeLightbox = function() {
-        exitFullScreen();
-
-        if (history.state && history.state.lightboxOpen) {
-            history.back(); 
+        // Intentar salir de fullscreen primero
+        if (document.fullscreenElement || document.webkitFullscreenElement) {
+            exitFullScreen();
         } else {
-            closeLightboxLogic();
+            performClose();
+            if (history.state && history.state.lightboxOpen) {
+                history.back();
+            }
         }
     };
 
-    function closeLightboxLogic() {
+    // Función interna para limpiar el DOM
+    function performClose() {
         const lightbox = document.getElementById('myLightbox');
         if(lightbox) lightbox.style.display = "none";
         
@@ -143,12 +143,20 @@ document.addEventListener("DOMContentLoaded", function() {
         if(backToTop && window.scrollY > 400) backToTop.style.display = "flex";
     }
 
-    window.addEventListener('popstate', function(event) {
-        exitFullScreen(); 
-        const lightbox = document.getElementById('myLightbox');
-        if(lightbox && lightbox.style.display === "flex") {
-            closeLightboxLogic();
+    // DETECTAR SALIDA DE FULLSCREEN (Para cerrar galería al dar Atrás en Android)
+    document.addEventListener('fullscreenchange', () => {
+        if (!document.fullscreenElement) {
+            performClose();
+            if (history.state && history.state.lightboxOpen) history.back();
         }
+    });
+    document.addEventListener('webkitfullscreenchange', () => {
+        if (!document.webkitFullscreenElement) performClose();
+    });
+
+    window.addEventListener('popstate', function(event) {
+        if (document.fullscreenElement) exitFullScreen();
+        performClose();
     });
 
     // --- FUNCIONES FULLSCREEN ---
@@ -158,22 +166,17 @@ document.addEventListener("DOMContentLoaded", function() {
                 elem.requestFullscreen().catch(err => console.log(err));
             } else if (elem.webkitRequestFullscreen) {
                 elem.webkitRequestFullscreen();
-            } else if (elem.msRequestFullscreen) {
-                elem.msRequestFullscreen();
             }
         }
     }
 
     function exitFullScreen() {
-        if (document.fullscreenElement || document.webkitFullscreenElement) {
-            if (document.exitFullscreen) {
-                document.exitFullscreen().catch(err => console.log(err));
-            } else if (document.webkitExitFullscreen) {
-                document.webkitExitFullscreen();
-            }
+        if (document.fullscreenElement) {
+            document.exitFullscreen().catch(err => console.log(err));
+        } else if (document.webkitExitFullscreen) {
+            document.webkitExitFullscreen();
         }
     }
-
 
     // --- LÓGICA ESCRITORIO ---
     window.plusLightboxSlides = function(n) { showLightboxSlides(lightboxIndex += n); };
@@ -194,7 +197,7 @@ document.addEventListener("DOMContentLoaded", function() {
         lightboxImg.src = originalImages[lightboxIndex-1].src;
     }
 
-    // --- LÓGICA MÓVIL (ZOOM + PAN + SIN BARRIDO) ---
+    // --- LÓGICA MÓVIL (ZOOM + BARRIDO CORREGIDO) ---
     function buildMobileGallery(startIndex) {
         const lightbox = document.getElementById('myLightbox');
         let snapWrapper = document.getElementById('mobileSnapWrapper');
@@ -212,30 +215,24 @@ document.addEventListener("DOMContentLoaded", function() {
         let carrouselImages = document.querySelectorAll('#home-carousel .carousel-slide');
         let originalImages = galleryImages.length > 0 ? galleryImages : carrouselImages;
 
-        // Construir DOM
         originalImages.forEach((img) => {
             const itemDiv = document.createElement('div');
             itemDiv.className = 'mobile-snap-item';
-            
             const newImg = document.createElement('img');
             newImg.src = img.src;
             newImg.alt = img.alt;
-            newImg.loading = "lazy"; 
+            newImg.loading = "eager"; 
             
-            // ACTIVAR ZOOM EN ESTA IMAGEN
             enableZoom(itemDiv, newImg);
-
             itemDiv.appendChild(newImg);
             snapWrapper.appendChild(itemDiv);
         });
 
-        // SALTO INSTANTÁNEO (EVITAR BARRIDO)
         snapWrapper.style.scrollSnapType = 'none';
         snapWrapper.style.scrollBehavior = 'auto';
-
+        
         const width = window.innerWidth;
-        const targetPos = (startIndex - 1) * width;
-        snapWrapper.scrollLeft = targetPos;
+        snapWrapper.scrollLeft = (startIndex - 1) * width;
 
         requestAnimationFrame(() => {
             setTimeout(() => {
@@ -245,44 +242,35 @@ document.addEventListener("DOMContentLoaded", function() {
         });
     }
 
-    // === LÓGICA DE ZOOM (DOBLE TAP + PINCH + PAN) ===
+    // === LÓGICA DE ZOOM (DOBLE TAP + PINCH) ===
     function enableZoom(container, img) {
         let currentScale = 1;
         let lastTap = 0;
         let isPinching = false;
         let startDist = 0;
         let startScale = 1;
-        
-        // Variables para Pan
         let startX = 0, startY = 0;
         let moveX = 0, moveY = 0;
         let initialMoveX = 0, initialMoveY = 0;
 
-        // DOBLE TAP
         container.addEventListener('touchstart', function(e) {
             const now = new Date().getTime();
             const tapGap = now - lastTap;
             
-            // Detección Doble Tap
             if (tapGap < 300 && tapGap > 0 && e.touches.length === 1) {
-                e.preventDefault(); // Evitar zoom nativo del navegador
-                if (currentScale > 1) {
-                    resetZoom();
-                } else {
-                    zoomIn();
-                }
+                e.preventDefault(); 
+                if (currentScale > 1) resetZoom();
+                else zoomIn();
             }
             lastTap = now;
 
-            // Detección Inicio Pinch
             if (e.touches.length === 2) {
                 isPinching = true;
                 startDist = getDistance(e.touches);
                 startScale = currentScale;
-                img.style.transition = 'none'; // Quitar transición para respuesta inmediata
+                img.style.transition = 'none';
             }
 
-            // Detección Inicio Pan (Solo si hay zoom)
             if (e.touches.length === 1 && currentScale > 1) {
                 startX = e.touches[0].clientX;
                 startY = e.touches[0].clientY;
@@ -292,30 +280,19 @@ document.addEventListener("DOMContentLoaded", function() {
         });
 
         container.addEventListener('touchmove', function(e) {
-            // Lógica Pinch
             if (isPinching && e.touches.length === 2) {
-                e.preventDefault(); // Evitar scroll de la página
-                e.stopPropagation(); // Evitar scroll del carrusel
-                
+                e.preventDefault(); e.stopPropagation();
                 const dist = getDistance(e.touches);
-                const scaleChange = dist / startDist;
-                currentScale = Math.min(Math.max(1, startScale * scaleChange), 4); // Min 1x, Max 4x
+                currentScale = Math.min(Math.max(1, startScale * (dist / startDist)), 4);
                 updateTransform();
             }
 
-            // Lógica Pan
             if (!isPinching && e.touches.length === 1 && currentScale > 1) {
-                e.preventDefault(); // Evitar scroll nativo
-                e.stopPropagation(); // CRÍTICO: Evitar que el carrusel se mueva
-                
+                e.preventDefault(); e.stopPropagation();
                 const deltaX = e.touches[0].clientX - startX;
                 const deltaY = e.touches[0].clientY - startY;
-                
                 moveX = initialMoveX + deltaX;
                 moveY = initialMoveY + deltaY;
-                
-                // Limitar Pan para no salir de la imagen (Opcional, pero recomendado)
-                // updateTransform maneja la aplicación
                 updateTransform(); 
             }
         });
@@ -323,21 +300,19 @@ document.addEventListener("DOMContentLoaded", function() {
         container.addEventListener('touchend', function(e) {
             if (isPinching && e.touches.length < 2) {
                 isPinching = false;
-                img.style.transition = 'transform 0.3s ease-out'; // Restaurar suavidad
-                if (currentScale < 1.1) resetZoom(); // Si soltó cerca de 1, resetear
+                img.style.transition = 'transform 0.3s ease-out';
+                if (currentScale < 1.1) resetZoom();
             }
         });
 
         function zoomIn() {
-            currentScale = 2.5;
-            moveX = 0; moveY = 0;
+            currentScale = 2.5; moveX = 0; moveY = 0;
             img.style.transition = 'transform 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94)';
             updateTransform();
         }
 
         function resetZoom() {
-            currentScale = 1;
-            moveX = 0; moveY = 0;
+            currentScale = 1; moveX = 0; moveY = 0;
             img.style.transition = 'transform 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94)';
             updateTransform();
         }
@@ -347,22 +322,25 @@ document.addEventListener("DOMContentLoaded", function() {
         }
 
         function getDistance(touches) {
-            return Math.hypot(
-                touches[0].clientX - touches[1].clientX,
-                touches[0].clientY - touches[1].clientY
-            );
+            return Math.hypot(touches[0].clientX - touches[1].clientX, touches[0].clientY - touches[1].clientY);
         }
     }
 
 
     // =========================================================
-    //   4. GALERÍA SCROLL (MANUAL) - [CORRECCIÓN ANIMACIÓN DESKTOP]
+    //   4. GALERÍA SCROLL (ANIMACIÓN CORREGIDA + ANTI-BUG CARGA)
     // =========================================================
     window.initScrollGallery = function(folderPath, imagePrefix, totalImages) {
         const container = document.getElementById('scroll-gallery');
         if (!container) return;
 
-        const observerOptions = { root: null, rootMargin: '0px', threshold: 0.1 };
+        // Margen -50px asegura que la animación inicie al entrar un poco en pantalla
+        const observerOptions = { 
+            root: null, 
+            rootMargin: '0px 0px -50px 0px', 
+            threshold: 0.15 
+        };
+        
         const observer = new IntersectionObserver((entries, observer) => {
             entries.forEach(entry => {
                 if (entry.isIntersecting) {
@@ -378,11 +356,11 @@ document.addEventListener("DOMContentLoaded", function() {
             domImg.alt = `Foto ${i} - Eivind Street`;
             domImg.className = 'gallery-item';
             
-            // CORRECCIÓN: SE ELIMINÓ loading="lazy" PARA QUE LA ANIMACIÓN
-            // DE ENTRADA FUNCIONE CORRECTAMENTE EN ESCRITORIO
+            // NO USAR LAZY LOAD AQUÍ (Para que funcione la animación)
             
             domImg.onclick = function() { openLightbox(i); };
 
+            // Lógica para detectar orientación y asignar tamaño
             domImg.onload = function() {
                 if (this.naturalHeight > this.naturalWidth) {
                     this.classList.add('is-portrait');
@@ -395,6 +373,14 @@ document.addEventListener("DOMContentLoaded", function() {
                     this.classList.add('align-center');
                 }
             };
+
+            // ¡¡CORRECCIÓN CRÍTICA!! 
+            // Si la imagen ya está en caché, onload no dispara.
+            // Forzamos la comprobación.
+            if (domImg.complete) {
+                domImg.onload();
+            }
+
             container.appendChild(domImg);
             observer.observe(domImg);
         }
@@ -424,7 +410,6 @@ document.addEventListener("DOMContentLoaded", function() {
     // =========================================================
     //   6. AUTO-PLAY MENÚ MÓVIL
     // =========================================================
-    // RESTAURADO A 768px
     if (window.innerWidth <= 768 && document.getElementById('projects-container')) {
         const projectLinks = document.querySelectorAll('.project-link');
         let currentProjIndex = 0;

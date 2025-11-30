@@ -21,7 +21,7 @@ body {
     font-family: var(--font-main);
     font-weight: 300;
     overflow-x: hidden;
-    scroll-behavior: smooth; /* Scroll suave nativo */
+    scroll-behavior: smooth;
 }
 
 /* Títulos y Encabezados Globales */
@@ -36,9 +36,7 @@ p {
     line-height: 1.8;
 }
 
-/* ==========================================================================
-   HEADER GENERAL
-   ========================================================================== */
+/* HEADER GENERAL */
 header {
     background: linear-gradient(to bottom, #141414, #000000);
     padding: 30px 40px;
@@ -163,21 +161,16 @@ header {
 
 .mobile-social a { font-size: 1.8rem; }
 
-/* ==========================================================================
-   HEADER TRANSPARENT MODE
-   ========================================================================== */
+/* HEADER TRANSPARENT MODE */
 body.transparent-mode header {
     background: linear-gradient(to bottom, rgba(58, 58, 58, 0) 60%, rgba(58, 58, 58, 0.2) 100%) !important;
     padding-top: 30px;
     padding-bottom: 30px; 
 }
-
 body.transparent-mode main { margin-top: 0 !important; }
-
 body.transparent-mode .project-hero,
 body.transparent-mode .about-banner,
 body.transparent-mode .projects-menu { padding-top: 100px; }
-
 
 /* CARRUSEL HOME */
 .carousel-container {
@@ -211,14 +204,13 @@ footer {
 }
 footer .social-icons-footer a { color: black; font-size: 1.5rem; margin: 0 15px; }
 
-/* PROYECTOS MENU (Estilos Generales/Desktop) */
+/* PROYECTOS MENU */
 .projects-menu {
     height: 100vh; display: flex; flex-direction: column;
     justify-content: center; align-items: center;
     background-size: cover; background-position: center;
     background-image: url('../img/proyectos/general/fondoProy.jpg');
     text-align: center;
-    /* Transición suave para el cambio de fondo */
     transition: background-image 0.5s ease-in-out;
 }
 .project-link {
@@ -314,6 +306,11 @@ footer .social-icons-footer a { color: black; font-size: 1.5rem; margin: 0 15px;
 main { margin-top: 100px; min-height: 90vh; }
 
 /* RESPONSIVE HEADERS */
+@media screen and (max-width: 1024px) {
+    header { padding: 15px 20px; }
+    nav ul { gap: 20px; max-width: 100%; } 
+    .logo-container img { height: 50px; }
+}
 @media screen and (max-width: 768px) {
     header { padding: 20px; height: auto; }
     body.transparent-mode header { 
@@ -326,12 +323,9 @@ main { margin-top: 100px; min-height: 90vh; }
     .project-hero, .about-banner { height: auto !important; min-height: 60vh; padding-bottom: 60px; align-items: flex-end; }
     .hero-text, .about-text { margin-top: 100px; width: 100%; max-width: 100%; background: linear-gradient(to top, rgba(0,0,0,0.8), transparent); }
     .project-link { font-size: 2rem; margin: 25px 0; }
-    .logo-container img { height: 50px; }
 }
 
-/* =========================================================
-   GALERÍA SCROLL (EDITORIAL / VERTICAL)
-   ========================================================= */
+/* GALERÍA SCROLL */
 .scroll-gallery-container {
     display: flex; flex-direction: column; width: 100%;
     max-width: 1200px; margin: 0 auto; padding: 20px 0; gap: 60px; 
@@ -356,9 +350,7 @@ main { margin-top: 100px; min-height: 90vh; }
     .gallery-item.is-portrait { max-width: 70%; }
 }
 
-/* =========================================================
-   BOTÓN VOLVER ARRIBA (Back to Top)
-   ========================================================= */
+/* BOTÓN VOLVER ARRIBA */
 #backToTop {
     position: fixed; bottom: 30px; right: 30px; width: 50px; height: 50px;
     background-color: rgba(0, 0, 0, 0.4); color: white; border: none;
@@ -371,28 +363,16 @@ main { margin-top: 100px; min-height: 90vh; }
 #backToTop.show { opacity: 1; visibility: visible; }
 #backToTop:hover { background-color: rgba(0, 0, 0, 0.8); transform: translateY(-3px); }
 
-/* =========================================================
-   AJUSTES MÓVILES: AUTO-PLAY MENU
-   ========================================================= */
+/* AUTO-PLAY MENU MÓVIL */
 @media screen and (max-width: 768px) {
-    .projects-menu {
-        height: 100vh !important;
-        justify-content: center; 
-        padding-top: 0; 
-        padding-bottom: 0;
-    }
+    .projects-menu { height: 100vh !important; justify-content: center; padding-top: 0; padding-bottom: 0; }
     .project-link {
-        font-size: 1.5rem; 
-        margin: 25px 0; 
-        opacity: 0.4; 
+        font-size: 1.5rem; margin: 25px 0; opacity: 0.4; 
         transition: opacity 0.5s ease, transform 0.5s ease; 
-        position: relative; 
-        display: inline-block;
-        pointer-events: auto; 
+        position: relative; display: inline-block; pointer-events: auto; 
     }
     .project-link.active-project {
-        opacity: 1 !important;
-        transform: scale(1.15);
+        opacity: 1 !important; transform: scale(1.15);
         text-shadow: 0 0 15px rgba(255,255,255,0.6);
     }
     .project-link.active-project::before {
