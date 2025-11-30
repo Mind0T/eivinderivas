@@ -76,28 +76,6 @@
         </div>
     </footer>
 
-    <script>
-        document.addEventListener("DOMContentLoaded", function() {
-            const container = document.getElementById('home-carousel');
-            const prevBtn = container.querySelector('.prev');
-            const isMobile = window.innerWidth <= 768;
-            const imgPrefix = isMobile ? 'carrumob' : 'carru';
-            
-            for (let i = 1; i <= 8; i++) {
-                const img = document.createElement('img');
-                img.className = 'carousel-slide';
-                img.src = `assets/img/carruselHOME/${imgPrefix}${i}.jpg`;
-                // SEO CLAVE: Alt Text con tu nombre
-                img.alt = `Fotografía de calle CDMX por Eivind Leso - Portafolio ${i}`;
-                
-                if (i === 1) {
-                    img.classList.add('active');
-                    img.style.display = 'block';
-                }
-                container.insertBefore(img, prevBtn);
-            }
-        });
-    </script>
     <script src="assets/js/script.js"></script>
 </body>
 </html>

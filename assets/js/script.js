@@ -1,15 +1,35 @@
 document.addEventListener("DOMContentLoaded", function() {
     
-    // =========================================================
-    //   LÓGICA DEL CARRUSEL PRINCIPAL (HOME)
-    // =========================================================
+    // Variables globales
     let slideIndex = 1;
     let slideInterval;
-    const slides = document.getElementsByClassName("carousel-slide");
-    
-    if (slides.length > 0 && document.getElementById('home-carousel')) {
-        showSlides(slideIndex);
-        startAutoSlide();
+    let slides = document.getElementsByClassName("carousel-slide");
+
+    // =========================================================
+    //   1. LÓGICA DEL CARRUSEL HOME (MANUAL / ESTÁTICO)
+    // =========================================================
+    function initHomeCarousel() {
+        const container = document.getElementById('home-carousel');
+        if (!container) return;
+
+        const prevBtn = container.querySelector('.prev'); 
+        const isMobile = window.innerWidth <= 768;
+        
+        const imgPrefix = isMobile ? 'carrumob' : 'carru';
+        const totalImages = 8; 
+
+        for (let i = 1; i <= totalImages; i++) {
+            const domImg = document.createElement('img');
+            domImg.className = 'carousel-slide'; 
+            domImg.src = `assets/img/carruselHOME/${imgPrefix}${i}.jpg`;
+            domImg.alt = `Portada Eivind Street ${i}`;
+            container.insertBefore(domImg, prevBtn);
+        }
+
+        if (totalImages > 0) {
+            showSlides(1);
+            startAutoSlide();
+        }
     }
 
     function startAutoSlide() {
@@ -24,6 +44,7 @@ document.addEventListener("DOMContentLoaded", function() {
     };
 
     function showSlides(n) {
+        if (slides.length === 0) return;
         let i;
         if (n > slides.length) {slideIndex = 1}    
         if (n < 1) {slideIndex = slides.length}
@@ -37,8 +58,10 @@ document.addEventListener("DOMContentLoaded", function() {
         }
     }
 
+    initHomeCarousel();
+
     // =========================================================
-    //   UTILIDADES (Fondos, Menú Móvil)
+    //   2. UTILIDADES
     // =========================================================
     window.changeBackground = function(imageName) {
         const container = document.getElementById('projects-container');
@@ -47,7 +70,6 @@ document.addEventListener("DOMContentLoaded", function() {
 
     window.resetBackground = function() {
         const container = document.getElementById('projects-container');
-        // En desktop regresamos al fondo default. En móvil no, para evitar parpadeos.
         if(window.innerWidth > 768 && container) {
             container.style.backgroundImage = "url('assets/img/proyectos/general/fondoProy.jpg')";
         }
@@ -65,7 +87,7 @@ document.addEventListener("DOMContentLoaded", function() {
     }
 
     // =========================================================
-    //   LÓGICA LIGHTBOX (VISOR DE IMÁGENES)
+    //   3. LÓGICA LIGHTBOX (SWIPE + BOTÓN ATRÁS)
     // =========================================================
     let lightboxIndex = 1;
     
@@ -76,45 +98,87 @@ document.addEventListener("DOMContentLoaded", function() {
             lightbox.style.justifyContent = "center"; 
             lightbox.style.alignItems = "center";
             currentLightboxSlide(n);
+
+            // AGREGAR ESTADO AL HISTORIAL (Para que el botón Atrás cierre el modal)
+            history.pushState({lightboxOpen: true}, "", "#lightbox");
         }
     };
 
     window.closeLightbox = function() {
-        const lightbox = document.getElementById('myLightbox');
-        if(lightbox) lightbox.style.display = "none";
+        // Si estamos cerrando con el botón X, simulamos un "Atrás" para limpiar el historial
+        // El evento popstate se encargará de ocultar el div
+        if (history.state && history.state.lightboxOpen) {
+            history.back(); 
+        } else {
+            // Fallback por si no hay estado
+            const lightbox = document.getElementById('myLightbox');
+            if(lightbox) lightbox.style.display = "none";
+        }
     };
+
+    // ESCUCHAR EL BOTÓN ATRÁS DEL NAVEGADOR/CELULAR
+    window.addEventListener('popstate', function(event) {
+        const lightbox = document.getElementById('myLightbox');
+        if(lightbox && lightbox.style.display === "flex") {
+            lightbox.style.display = "none";
+        }
+    });
 
     window.plusLightboxSlides = function(n) { showLightboxSlides(lightboxIndex += n); };
     window.currentLightboxSlide = function(n) { showLightboxSlides(lightboxIndex = n); };
 
     function showLightboxSlides(n) {
-        // Detectamos cuántas imágenes hay actualmente en la galería (dinámico)
         let galleryImages = document.querySelectorAll('.scroll-gallery-container .gallery-item');
-        let carrouselImages = document.querySelectorAll('.project-carousel-frame .carousel-slide');
-        
+        let carrouselImages = document.querySelectorAll('#home-carousel .carousel-slide');
         let originalImages = galleryImages.length > 0 ? galleryImages : carrouselImages;
 
         const lightboxImg = document.getElementById("lightbox-img");
         if (!originalImages.length || !lightboxImg) return;
         
-        // Navegación circular
         if (n > originalImages.length) { lightboxIndex = 1; }
         else if (n < 1) { lightboxIndex = originalImages.length; }
         else { lightboxIndex = n; }
 
-        // Actualizamos la fuente del lightbox con la imagen correspondiente
         lightboxImg.src = originalImages[lightboxIndex-1].src;
     }
 
+    // --- LÓGICA DE SWIPE (DESLIZAR) EN MÓVIL ---
+    const lightboxElement = document.getElementById('myLightbox');
+    let touchStartX = 0;
+    let touchEndX = 0;
+
+    if (lightboxElement) {
+        lightboxElement.addEventListener('touchstart', function(e) {
+            touchStartX = e.changedTouches[0].screenX;
+        }, {passive: true});
+
+        lightboxElement.addEventListener('touchend', function(e) {
+            touchEndX = e.changedTouches[0].screenX;
+            handleSwipe();
+        }, {passive: true});
+    }
+
+    function handleSwipe() {
+        const swipeThreshold = 50; // Mínimo de píxeles para considerar un swipe
+        if (touchEndX < touchStartX - swipeThreshold) {
+            // Deslizamiento a la IZQUIERDA -> Siguiente foto
+            window.plusLightboxSlides(1);
+        }
+        if (touchEndX > touchStartX + swipeThreshold) {
+            // Deslizamiento a la DERECHA -> Foto anterior
+            window.plusLightboxSlides(-1);
+        }
+    }
+
+
     // =========================================================
-    //   GALERÍA INTELIGENTE (AUTO-DETECCIÓN DE IMÁGENES)
+    //   4. GALERÍA SCROLL (MANUAL)
     // =========================================================
-    window.initScrollGallery = function(folderPath, imagePrefix) {
+    window.initScrollGallery = function(folderPath, imagePrefix, totalImages) {
         const container = document.getElementById('scroll-gallery');
         if (!container) return;
 
-        // Configuración para la animación de entrada (fade-in)
-        const observerOptions = { root: null, rootMargin: '0px', threshold: 0.15 };
+        const observerOptions = { root: null, rootMargin: '0px', threshold: 0.1 };
         const observer = new IntersectionObserver((entries, observer) => {
             entries.forEach(entry => {
                 if (entry.isIntersecting) {
@@ -124,58 +188,34 @@ document.addEventListener("DOMContentLoaded", function() {
             });
         }, observerOptions);
 
-        // Función recursiva que intenta cargar imagen por imagen
-        function tryLoadImage(index) {
-            const imgObj = new Image(); 
-            const src = `${folderPath}/${imagePrefix}${index}.jpg`;
+        for (let i = 1; i <= totalImages; i++) {
+            const domImg = document.createElement('img');
+            domImg.src = `${folderPath}/${imagePrefix}${i}.jpg`;
+            domImg.alt = `Foto ${i} - Eivind Street`;
+            domImg.className = 'gallery-item';
             
-            imgObj.src = src;
+            domImg.onclick = function() { openLightbox(i); };
 
-            // CASO 1: La imagen EXISTE
-            imgObj.onload = function() {
-                // Creamos el elemento HTML real
-                const domImg = document.createElement('img');
-                domImg.src = src;
-                domImg.alt = `Foto ${index} - Eivind Street`;
-                domImg.className = 'gallery-item';
-                
-                // Asignamos el click para abrir el Lightbox en el índice correcto
-                domImg.onclick = function() { openLightbox(index); };
-
-                // Detectamos si es Vertical u Horizontal para el estilo
+            domImg.onload = function() {
                 if (this.naturalHeight > this.naturalWidth) {
-                    domImg.classList.add('is-portrait');
-                    // Patrón de alineación estética: Izquierda, Centro, Derecha
-                    const pos = index % 3; 
-                    if (pos === 1) domImg.classList.add('align-left');
-                    else if (pos === 2) domImg.classList.add('align-center');
-                    else domImg.classList.add('align-right');
+                    this.classList.add('is-portrait');
+                    const pos = i % 3; 
+                    if (pos === 1) this.classList.add('align-left');
+                    else if (pos === 2) this.classList.add('align-center');
+                    else this.classList.add('align-right');
                 } else {
-                    domImg.classList.add('is-landscape');
-                    domImg.classList.add('align-center');
+                    this.classList.add('is-landscape');
+                    this.classList.add('align-center');
                 }
-
-                // Insertamos en el DOM
-                container.appendChild(domImg);
-                observer.observe(domImg);
-
-                // ¡IMPORTANTE! Intentamos cargar la siguiente imagen (n+1)
-                tryLoadImage(index + 1);
             };
 
-            // CASO 2: La imagen NO EXISTE (Error 404) -> Fin del bucle
-            imgObj.onerror = function() {
-                // Se detiene silenciosamente, ya no busca más fotos.
-                console.log(`Galería cargada completamente. Total: ${index - 1} imágenes.`);
-            };
+            container.appendChild(domImg);
+            observer.observe(domImg);
         }
-
-        // Iniciamos el proceso con la imagen número 1
-        tryLoadImage(1);
     };
 
     // =========================================================
-    //   BOTÓN BACK TO TOP
+    //   5. BOTÓN BACK TO TOP
     // =========================================================
     const backToTopBtn = document.getElementById("backToTop");
     if(backToTopBtn) {
@@ -189,14 +229,13 @@ document.addEventListener("DOMContentLoaded", function() {
     }
 
     // =========================================================
-    //   AUTO-PLAY EN MENÚ PROYECTOS (MÓVIL)
+    //   6. AUTO-PLAY MENÚ MÓVIL
     // =========================================================
     if (window.innerWidth <= 768 && document.getElementById('projects-container')) {
         const projectLinks = document.querySelectorAll('.project-link');
         let currentProjIndex = 0;
         const totalProjects = projectLinks.length;
-        const cycleTime = 2500;
-
+        
         function activateProject(index) {
             projectLinks.forEach(link => link.classList.remove('active-project'));
             if(projectLinks[index]) {
@@ -211,6 +250,6 @@ document.addEventListener("DOMContentLoaded", function() {
             currentProjIndex++;
             if (currentProjIndex >= totalProjects) currentProjIndex = 0;
             activateProject(currentProjIndex);
-        }, cycleTime);
+        }, 2500);
     }
 });

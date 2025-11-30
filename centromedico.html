@@ -3,9 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Mercado de Jamaica | Eivind Street por Eivind Leso</title>
-    <meta name="description" content="Documentación visual del Mercado de Jamaica por Eivind Leso. El ciclo de la vida y la muerte en CDMX a través de sus flores.">
-    <meta name="keywords" content="Mercado Jamaica, Eivind Leso, Fotografía Documental Flores">
+    <title>Centro Médico Siglo XXI | Arquitectura y Memoria | Eivind Leso</title>
+    <meta name="description" content="Ensayo visual sobre el Centro Médico Nacional Siglo XXI por Eivind Leso. La convergencia entre el brutalismo, el muralismo mexicano y la espera humana.">
+    <meta name="keywords" content="Centro Médico Siglo XXI, Eivind Leso, Fotografía Arquitectura Brutalista, CDMX, Muralismo, Eivind Street">
     
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;700;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -13,12 +13,12 @@
     <style>
         .project-hero {
             position: relative; width: 100%; min-height: 50vh; 
-            background-image: url('assets/img/proyectos/jamaica/bannerJam.jpg');
+            background-image: url('assets/img/proyectos/centromedico/bannerCmn.jpg');
             background-size: cover; background-position: center;
             display: flex; align-items: center; justify-content: center;
         }
         .project-hero::before {
-            content: ''; position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.4);
+            content: ''; position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.5);
         }
     </style>
 </head>
@@ -60,23 +60,25 @@
     <main>
         <section class="project-hero">
             <div class="hero-text">
-                <h1>Jamaica</h1>
-                <p>"El Mercado de Jamaica es el punto donde la Ciudad de México viene a honrar la vida y celebrar la muerte. Un proyecto en desarrollo de <strong>Eivind Leso street</strong> que se adentra en los pasillos donde se tejen las emociones de la capital."</p>
+                <h1>Centro Médico</h1>
+                <p>
+                    "Entre murales de Siqueiros y concreto masivo, el Centro Médico no es solo un hospital; es un templo de la sanación y la espera. Como <strong>Eivind Leso Street</strong>, documento la tensión entre la monumentalidad del estado y la fragilidad humana que transita sus explanadas cada día."
+                </p>
             </div>
         </section>
 
         <section class="project-white-area">
             <div id="scroll-gallery" class="scroll-gallery-container"></div>
             <div class="project-nav-thin">
-                <a href="iztapalapa.html">&#10094; Iztapalapa</a>
-                <a href="transportecdmx.html">Transporte CDMX &#10095;</a>
+                <a href="transportecdmx.html">&#10094; Transporte CDMX</a>
+                <a href="proyectosPersonales.html">Menú &#10095;</a>
             </div>
         </section>
     </main>
 
     <div id="myLightbox" class="lightbox">
         <span class="close-lightbox" onclick="closeLightbox()">&times;</span>
-        <img class="lightbox-content" id="lightbox-img" alt="Foto Mercado Jamaica por Eivind Leso">
+        <img class="lightbox-content" id="lightbox-img" alt="Foto Centro Médico Siglo XXI Eivind Street">
         <a class="lightbox-prev" onclick="plusLightboxSlides(-1)">&#10094;</a>
         <a class="lightbox-next" onclick="plusLightboxSlides(1)">&#10095;</a>
     </div>
@@ -94,7 +96,8 @@
     <script src="assets/js/script.js"></script>
     <script>
         document.addEventListener("DOMContentLoaded", function() {
-            initScrollGallery('assets/img/proyectos/jamaica', 'jamCarru', 44);
+            // ACTUALIZADO A 7 IMÁGENES
+            initScrollGallery('assets/img/proyectos/centromedico', 'cmnCarru', 7);
         });
     </script>
 </body>

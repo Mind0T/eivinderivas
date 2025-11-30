@@ -3,9 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Metro CDMX | Ensayo de Soledad Colectiva por Eivind Leso</title>
-    <meta name="description" content="Eivind Leso presenta: Metro CDMX. Retratos de la soledad colectiva y la intimidad pública en el transporte más importante de la capital.">
-    <meta name="keywords" content="Metro CDMX, Eivind Leso, Eivind Street, Fotografía Urbana Metro">
+    <title>Transporte CDMX | Ensayo de Soledad Colectiva por Eivind Leso</title>
+    <meta name="description" content="Eivind Leso presenta: Transporte CDMX. Retratos de la soledad colectiva y la intimidad pública en el transporte más importante de la capital.">
+    <meta name="keywords" content="Transporte CDMX, Metro, Eivind Leso, Eivind Street, Fotografía Urbana">
     
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;700;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -13,7 +13,8 @@
     <style>
         .project-hero {
             position: relative; width: 100%; min-height: 50vh; 
-            background-image: url('assets/img/proyectos/metro/bannerMet.jpg');
+            /* Se mantiene el banner original si así lo deseas, o cámbialo si tienes uno nuevo en la nueva carpeta */
+            background-image: url('assets/img/proyectos/transportecdmx/bannerMet.jpg');
             background-size: cover; background-position: center;
             display: flex; align-items: center; justify-content: center;
         }
@@ -60,8 +61,8 @@
     <main>
         <section class="project-hero">
             <div class="hero-text">
-                <h1>Metro CDMX</h1>
-                <p>El Metro es el lugar donde más acompañados estamos y, paradójicamente, donde más solos nos sentimos. Como<strong> Eivind Leso Street</strong> intento documentar la "soledad colectiva": rostros, cansancio tras la jornada laboral y lectores abstraídos en medio del empujón.</p>
+                <h1>Transporte CDMX</h1>
+                <p>El transporte público es el lugar donde más acompañados estamos y, paradójicamente, donde más solos nos sentimos. Como<strong> Eivind Leso Street</strong> intento documentar la "soledad colectiva": rostros, cansancio tras la jornada laboral y lectores abstraídos en medio del empujón.</p>
             </div>
         </section>
 
@@ -69,14 +70,14 @@
             <div id="scroll-gallery" class="scroll-gallery-container"></div>
             <div class="project-nav-thin">
                 <a href="jamaica.html">&#10094; Jamaica</a>
-                <div></div>
+                <a href="centromedico.html">Centro Médico &#10095;</a>
             </div>
         </section>
     </main>
 
     <div id="myLightbox" class="lightbox">
         <span class="close-lightbox" onclick="closeLightbox()">&times;</span>
-        <img class="lightbox-content" id="lightbox-img" alt="Foto Metro CDMX por Eivind Leso">
+        <img class="lightbox-content" id="lightbox-img" alt="Foto Transporte CDMX por Eivind Leso">
         <a class="lightbox-prev" onclick="plusLightboxSlides(-1)">&#10094;</a>
         <a class="lightbox-next" onclick="plusLightboxSlides(1)">&#10095;</a>
     </div>
@@ -94,8 +95,9 @@
     <script src="assets/js/script.js"></script>
     <script>
         document.addEventListener("DOMContentLoaded", function() {
-            // Llamada automática sin número fijo
-            initScrollGallery('assets/img/proyectos/metro', 'metCarru');
+            // RUTA ACTUALIZADA: transportecdmx
+            // CANTIDAD ACTUALIZADA: 5
+            initScrollGallery('assets/img/proyectos/transportecdmx', 'metCarru', 5);
         });
     </script>
 </body>
