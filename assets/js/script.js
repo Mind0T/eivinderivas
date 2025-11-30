@@ -24,7 +24,7 @@ document.addEventListener("DOMContentLoaded", function() {
             domImg.className = 'carousel-slide'; 
             domImg.src = `assets/img/carruselHOME/${imgPrefix}${i}.jpg`;
             domImg.alt = `Portada Eivind Street ${i}`;
-            // Lazy loading aquí está bien (no afecta animación de entrada)
+            // Lazy loading en Home está bien
             if (i > 1) domImg.loading = "lazy";
             
             container.insertBefore(domImg, prevBtn);
@@ -115,12 +115,10 @@ document.addEventListener("DOMContentLoaded", function() {
             currentLightboxSlide(n);
         }
 
-        // Empujar estado para botón atrás
         history.pushState({lightboxOpen: true}, "", "#lightbox");
     };
 
     window.closeLightbox = function() {
-        // Intentar salir de fullscreen primero
         if (document.fullscreenElement || document.webkitFullscreenElement) {
             exitFullScreen();
         } else {
@@ -131,7 +129,6 @@ document.addEventListener("DOMContentLoaded", function() {
         }
     };
 
-    // Función interna para limpiar el DOM
     function performClose() {
         const lightbox = document.getElementById('myLightbox');
         if(lightbox) lightbox.style.display = "none";
@@ -143,7 +140,7 @@ document.addEventListener("DOMContentLoaded", function() {
         if(backToTop && window.scrollY > 400) backToTop.style.display = "flex";
     }
 
-    // DETECTAR SALIDA DE FULLSCREEN (Para cerrar galería al dar Atrás en Android)
+    // Detectar salida de Fullscreen
     document.addEventListener('fullscreenchange', () => {
         if (!document.fullscreenElement) {
             performClose();
@@ -159,7 +156,6 @@ document.addEventListener("DOMContentLoaded", function() {
         performClose();
     });
 
-    // --- FUNCIONES FULLSCREEN ---
     function toggleFullScreen(elem) {
         if (!document.fullscreenElement) {
             if (elem.requestFullscreen) {
@@ -178,7 +174,6 @@ document.addEventListener("DOMContentLoaded", function() {
         }
     }
 
-    // --- LÓGICA ESCRITORIO ---
     window.plusLightboxSlides = function(n) { showLightboxSlides(lightboxIndex += n); };
     window.currentLightboxSlide = function(n) { showLightboxSlides(lightboxIndex = n); };
 
@@ -197,7 +192,6 @@ document.addEventListener("DOMContentLoaded", function() {
         lightboxImg.src = originalImages[lightboxIndex-1].src;
     }
 
-    // --- LÓGICA MÓVIL (ZOOM + BARRIDO CORREGIDO) ---
     function buildMobileGallery(startIndex) {
         const lightbox = document.getElementById('myLightbox');
         let snapWrapper = document.getElementById('mobileSnapWrapper');
@@ -242,7 +236,6 @@ document.addEventListener("DOMContentLoaded", function() {
         });
     }
 
-    // === LÓGICA DE ZOOM (DOBLE TAP + PINCH) ===
     function enableZoom(container, img) {
         let currentScale = 1;
         let lastTap = 0;
@@ -328,17 +321,16 @@ document.addEventListener("DOMContentLoaded", function() {
 
 
     // =========================================================
-    //   4. GALERÍA SCROLL (ANIMACIÓN CORREGIDA + ANTI-BUG CARGA)
+    //   4. GALERÍA SCROLL (OBSERVER PURO)
     // =========================================================
     window.initScrollGallery = function(folderPath, imagePrefix, totalImages) {
         const container = document.getElementById('scroll-gallery');
         if (!container) return;
 
-        // Margen -50px asegura que la animación inicie al entrar un poco en pantalla
         const observerOptions = { 
             root: null, 
-            rootMargin: '0px 0px -50px 0px', 
-            threshold: 0.15 
+            rootMargin: '0px 0px -50px 0px', // Mantenemos el margen seguro
+            threshold: 0.1
         };
         
         const observer = new IntersectionObserver((entries, observer) => {
@@ -356,11 +348,10 @@ document.addEventListener("DOMContentLoaded", function() {
             domImg.alt = `Foto ${i} - Eivind Street`;
             domImg.className = 'gallery-item';
             
-            // NO USAR LAZY LOAD AQUÍ (Para que funcione la animación)
+            // SIN LAZY LOADING para la galería principal
             
             domImg.onclick = function() { openLightbox(i); };
 
-            // Lógica para detectar orientación y asignar tamaño
             domImg.onload = function() {
                 if (this.naturalHeight > this.naturalWidth) {
                     this.classList.add('is-portrait');
@@ -374,14 +365,11 @@ document.addEventListener("DOMContentLoaded", function() {
                 }
             };
 
-            // ¡¡CORRECCIÓN CRÍTICA!! 
-            // Si la imagen ya está en caché, onload no dispara.
-            // Forzamos la comprobación.
-            if (domImg.complete) {
-                domImg.onload();
-            }
+            if (domImg.complete) domImg.onload();
 
             container.appendChild(domImg);
+            
+            // SE APLICA OBSERVER A TODOS (SIN LÓGICA DE TIEMPO)
             observer.observe(domImg);
         }
     };
