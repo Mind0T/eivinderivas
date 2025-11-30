@@ -91,7 +91,7 @@ document.addEventListener("DOMContentLoaded", function() {
     }
 
     // =========================================================
-    //   3. LÓGICA LIGHTBOX (HÍBRIDO + FULLSCREEN + INSTANT JUMP)
+    //   3. LÓGICA LIGHTBOX (HÍBRIDO + FULLSCREEN + INSTANT JUMP + ZOOM)
     // =========================================================
     let lightboxIndex = 1;
     
@@ -107,7 +107,7 @@ document.addEventListener("DOMContentLoaded", function() {
 
         // RESTAURADO A 768px
         if (window.innerWidth <= 768) {
-            // 1. Activar Pantalla Completa (Fullscreen API)
+            // 1. Activar Pantalla Completa
             toggleFullScreen(lightbox);
             
             // 2. Construir galería y saltar instantáneamente
@@ -119,12 +119,10 @@ document.addEventListener("DOMContentLoaded", function() {
             currentLightboxSlide(n);
         }
 
-        // Guardar estado en historial
         history.pushState({lightboxOpen: true}, "", "#lightbox");
     };
 
     window.closeLightbox = function() {
-        // Salir de Fullscreen si está activo
         exitFullScreen();
 
         if (history.state && history.state.lightboxOpen) {
@@ -134,7 +132,6 @@ document.addEventListener("DOMContentLoaded", function() {
         }
     };
 
-    // Lógica interna para cerrar visualmente
     function closeLightboxLogic() {
         const lightbox = document.getElementById('myLightbox');
         if(lightbox) lightbox.style.display = "none";
@@ -158,12 +155,10 @@ document.addEventListener("DOMContentLoaded", function() {
     function toggleFullScreen(elem) {
         if (!document.fullscreenElement) {
             if (elem.requestFullscreen) {
-                elem.requestFullscreen().catch(err => {
-                    console.log(`Error al intentar pantalla completa: ${err.message}`);
-                });
-            } else if (elem.webkitRequestFullscreen) { /* Safari */
+                elem.requestFullscreen().catch(err => console.log(err));
+            } else if (elem.webkitRequestFullscreen) {
                 elem.webkitRequestFullscreen();
-            } else if (elem.msRequestFullscreen) { /* IE11 */
+            } else if (elem.msRequestFullscreen) {
                 elem.msRequestFullscreen();
             }
         }
@@ -199,7 +194,7 @@ document.addEventListener("DOMContentLoaded", function() {
         lightboxImg.src = originalImages[lightboxIndex-1].src;
     }
 
-    // --- LÓGICA MÓVIL OPTIMIZADA (SIN BARRIDO) ---
+    // --- LÓGICA MÓVIL (ZOOM + PAN + SIN BARRIDO) ---
     function buildMobileGallery(startIndex) {
         const lightbox = document.getElementById('myLightbox');
         let snapWrapper = document.getElementById('mobileSnapWrapper');
@@ -221,15 +216,20 @@ document.addEventListener("DOMContentLoaded", function() {
         originalImages.forEach((img) => {
             const itemDiv = document.createElement('div');
             itemDiv.className = 'mobile-snap-item';
+            
             const newImg = document.createElement('img');
             newImg.src = img.src;
             newImg.alt = img.alt;
             newImg.loading = "lazy"; 
+            
+            // ACTIVAR ZOOM EN ESTA IMAGEN
+            enableZoom(itemDiv, newImg);
+
             itemDiv.appendChild(newImg);
             snapWrapper.appendChild(itemDiv);
         });
 
-        // EVITAR EL BARRIDO (SWEEP)
+        // SALTO INSTANTÁNEO (EVITAR BARRIDO)
         snapWrapper.style.scrollSnapType = 'none';
         snapWrapper.style.scrollBehavior = 'auto';
 
@@ -245,9 +245,118 @@ document.addEventListener("DOMContentLoaded", function() {
         });
     }
 
+    // === LÓGICA DE ZOOM (DOBLE TAP + PINCH + PAN) ===
+    function enableZoom(container, img) {
+        let currentScale = 1;
+        let lastTap = 0;
+        let isPinching = false;
+        let startDist = 0;
+        let startScale = 1;
+        
+        // Variables para Pan
+        let startX = 0, startY = 0;
+        let moveX = 0, moveY = 0;
+        let initialMoveX = 0, initialMoveY = 0;
+
+        // DOBLE TAP
+        container.addEventListener('touchstart', function(e) {
+            const now = new Date().getTime();
+            const tapGap = now - lastTap;
+            
+            // Detección Doble Tap
+            if (tapGap < 300 && tapGap > 0 && e.touches.length === 1) {
+                e.preventDefault(); // Evitar zoom nativo del navegador
+                if (currentScale > 1) {
+                    resetZoom();
+                } else {
+                    zoomIn();
+                }
+            }
+            lastTap = now;
+
+            // Detección Inicio Pinch
+            if (e.touches.length === 2) {
+                isPinching = true;
+                startDist = getDistance(e.touches);
+                startScale = currentScale;
+                img.style.transition = 'none'; // Quitar transición para respuesta inmediata
+            }
+
+            // Detección Inicio Pan (Solo si hay zoom)
+            if (e.touches.length === 1 && currentScale > 1) {
+                startX = e.touches[0].clientX;
+                startY = e.touches[0].clientY;
+                initialMoveX = moveX;
+                initialMoveY = moveY;
+            }
+        });
+
+        container.addEventListener('touchmove', function(e) {
+            // Lógica Pinch
+            if (isPinching && e.touches.length === 2) {
+                e.preventDefault(); // Evitar scroll de la página
+                e.stopPropagation(); // Evitar scroll del carrusel
+                
+                const dist = getDistance(e.touches);
+                const scaleChange = dist / startDist;
+                currentScale = Math.min(Math.max(1, startScale * scaleChange), 4); // Min 1x, Max 4x
+                updateTransform();
+            }
+
+            // Lógica Pan
+            if (!isPinching && e.touches.length === 1 && currentScale > 1) {
+                e.preventDefault(); // Evitar scroll nativo
+                e.stopPropagation(); // CRÍTICO: Evitar que el carrusel se mueva
+                
+                const deltaX = e.touches[0].clientX - startX;
+                const deltaY = e.touches[0].clientY - startY;
+                
+                moveX = initialMoveX + deltaX;
+                moveY = initialMoveY + deltaY;
+                
+                // Limitar Pan para no salir de la imagen (Opcional, pero recomendado)
+                // updateTransform maneja la aplicación
+                updateTransform(); 
+            }
+        });
+
+        container.addEventListener('touchend', function(e) {
+            if (isPinching && e.touches.length < 2) {
+                isPinching = false;
+                img.style.transition = 'transform 0.3s ease-out'; // Restaurar suavidad
+                if (currentScale < 1.1) resetZoom(); // Si soltó cerca de 1, resetear
+            }
+        });
+
+        function zoomIn() {
+            currentScale = 2.5;
+            moveX = 0; moveY = 0;
+            img.style.transition = 'transform 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94)';
+            updateTransform();
+        }
+
+        function resetZoom() {
+            currentScale = 1;
+            moveX = 0; moveY = 0;
+            img.style.transition = 'transform 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94)';
+            updateTransform();
+        }
+
+        function updateTransform() {
+            img.style.transform = `scale(${currentScale}) translate(${moveX / currentScale}px, ${moveY / currentScale}px)`;
+        }
+
+        function getDistance(touches) {
+            return Math.hypot(
+                touches[0].clientX - touches[1].clientX,
+                touches[0].clientY - touches[1].clientY
+            );
+        }
+    }
+
 
     // =========================================================
-    //   4. GALERÍA SCROLL (MANUAL)
+    //   4. GALERÍA SCROLL (MANUAL) - [CORRECCIÓN ANIMACIÓN DESKTOP]
     // =========================================================
     window.initScrollGallery = function(folderPath, imagePrefix, totalImages) {
         const container = document.getElementById('scroll-gallery');
@@ -268,7 +377,9 @@ document.addEventListener("DOMContentLoaded", function() {
             domImg.src = `${folderPath}/${imagePrefix}${i}.jpg`;
             domImg.alt = `Foto ${i} - Eivind Street`;
             domImg.className = 'gallery-item';
-            domImg.loading = "lazy";
+            
+            // CORRECCIÓN: SE ELIMINÓ loading="lazy" PARA QUE LA ANIMACIÓN
+            // DE ENTRADA FUNCIONE CORRECTAMENTE EN ESCRITORIO
             
             domImg.onclick = function() { openLightbox(i); };
 
